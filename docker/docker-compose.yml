@@ -1,0 +1,51 @@
+version: '3.5'
+name: operating-units-manager
+
+services:
+  operating-unit:
+    image: operating-unit
+    build:
+      context: ../operatingunit
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+    healthcheck:
+      test: [ "CMD", "curl", "-I", "http://localhost:8002" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  operating-unit-client:
+    image: operating-unit-client
+    build:
+      context: ../operatingunit_client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      operating-unit:
+        condition: service_healthy
+
+
+
+
+
+  postgres-db:
+    image: postgres
+    ports:
+      - "5432:5432"
+
+    environment:
+      - POSTGRES_DB=rnpc
+      - POSTGRES_PASSWORD=postgres
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
