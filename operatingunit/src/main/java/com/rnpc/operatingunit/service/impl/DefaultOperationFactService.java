@@ -28,8 +28,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Optional;
 
-/*#TODO: exceptions, finish logic*/
+
 @Service
 @RequiredArgsConstructor
 public class DefaultOperationFactService implements OperationFactService {
@@ -118,13 +119,13 @@ public class DefaultOperationFactService implements OperationFactService {
         }
     }
 
-    public OperationStepStatus getCurrentStep(Long operationFactId) {
+    public Optional<OperationStepStatus> getCurrentStep(Long operationFactId) {
         OperationFact operationFact = getById(operationFactId);
 
         if (isOperationFactStarted(operationFact)) {
-            return operationStepStatusService.getCurrent(operationFact.getSteps());
+            return Optional.of(operationStepStatusService.getCurrent(operationFact.getSteps()));
         } else {
-           return null;
+           return Optional.empty();
         }
     }
 

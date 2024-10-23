@@ -37,11 +37,11 @@ public class DefaultOperatingRoomService implements OperatingRoomService {
             createUserFromOperatingRoom(operatingRoom);
 
             if (room.isPresent()) {
-                return room.get();
+                operatingRoom = room.get();
+            } else {
+                operatingRoom = operatingRoomRepository.save(operatingRoom);
+                log.info("Operating room [{}] was saved", operatingRoom.getName());
             }
-
-            operatingRoomRepository.save(operatingRoom);
-            log.info("Operating room [{}] was saved", operatingRoom.getName());
         }
 
         return operatingRoom;

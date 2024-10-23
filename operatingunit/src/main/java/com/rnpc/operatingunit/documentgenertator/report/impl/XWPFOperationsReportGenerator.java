@@ -71,7 +71,7 @@ public class XWPFOperationsReportGenerator implements OperationsReportGenerator 
             e.printStackTrace();
         }
 
-        return null;
+        return InputStream.nullInputStream();
     }
 
     private void generateDocument(XWPFDocument document, LocalDate start, LocalDate end) {

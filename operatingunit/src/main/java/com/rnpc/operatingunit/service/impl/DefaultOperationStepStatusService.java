@@ -24,6 +24,8 @@ import java.util.function.Consumer;
 @Service
 @RequiredArgsConstructor
 public class DefaultOperationStepStatusService implements OperationStepStatusService {
+    public static final OperationStepStatus EMPTY_STATUS = new OperationStepStatus();
+
     private final OperationStepStatusRepository operationStepStatusRepository;
 
     @Transactional
@@ -55,7 +57,7 @@ public class DefaultOperationStepStatusService implements OperationStepStatusSer
                         && Objects.nonNull(st.getStartTime())
                         && OperationStepStatusName.STARTED.equals(st.getStatus()))
                 .min(Comparator.comparing(OperationStepStatus::getStartTime))
-                .orElse(new OperationStepStatus());
+                .orElse(EMPTY_STATUS);
     }
 
     public boolean areAllFinished(Collection<OperationStepStatus> steps) {

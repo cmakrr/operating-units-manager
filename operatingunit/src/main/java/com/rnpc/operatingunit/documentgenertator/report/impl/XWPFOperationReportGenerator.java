@@ -77,7 +77,7 @@ public class XWPFOperationReportGenerator implements OperationReportGenerator {
             e.printStackTrace();
         }
 
-        return null;
+        return InputStream.nullInputStream();
     }
 
     private void createTables(XWPFDocument document, Operation operation) {

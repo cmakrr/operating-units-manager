@@ -33,8 +33,6 @@ public class DefaultOperatingRoomAccessService implements OperatingRoomAccessSer
     }
 
     private void checkAccess(Inet roomIp, String ip) {
-        log.info(String.format(REMOTE_IP, ip));
-
         if (Objects.isNull(roomIp)) {
             throw new OperatingRoomUnauthorizedAction(NOT_OPERATING_ROOM);
         }

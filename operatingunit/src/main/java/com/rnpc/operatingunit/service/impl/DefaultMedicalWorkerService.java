@@ -7,7 +7,6 @@ import com.rnpc.operatingunit.model.OperationPlan;
 import com.rnpc.operatingunit.repository.MedicalWorkerRepository;
 import com.rnpc.operatingunit.service.MedicalWorkerService;
 import com.rnpc.operatingunit.service.PersonService;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -29,22 +28,20 @@ public class DefaultMedicalWorkerService implements MedicalWorkerService {
     private final PersonService personService;
 
     @Transactional
-    @Nullable
     public MedicalWorker saveOrGetMedicalWorker(MedicalWorker medicalWorker) {
         if (Objects.nonNull(medicalWorker) &&
                 (Objects.nonNull(medicalWorker.getFullName()) || Objects.nonNull(medicalWorker.getRole()))) {
-            Optional<MedicalWorker> worker = medicalWorkerRepository.findByFullNameAndRole(medicalWorker.getFullName(),
-                    medicalWorker.getRole());
-
+            Optional<MedicalWorker> worker =
+                    medicalWorkerRepository.findByFullNameAndRole(medicalWorker.getFullName(), medicalWorker.getRole());
             if (worker.isPresent()) {
-                return worker.get();
+                medicalWorker = worker.get();
             } else {
+                medicalWorker = medicalWorkerRepository.save(medicalWorker);
                 log.info("Medical worker [{}] was saved", medicalWorker.getFullName());
-                return medicalWorkerRepository.save(medicalWorker);
             }
         }
 
-        return null;
+        return medicalWorker;
     }
 
     @Transactional

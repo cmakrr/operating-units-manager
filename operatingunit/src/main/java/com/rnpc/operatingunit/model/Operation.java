@@ -36,8 +36,7 @@ public class Operation {
     private String operationName;
     @Column(name = "o_date", nullable = false)
     private LocalDate date;
-    //TODO: length
-    @Column(name = "o_instruments", columnDefinition = "TEXT", length = 1000)
+    @Column(name = "o_instruments")
     private String instruments;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "o_operatinn_plan_id", nullable = false)

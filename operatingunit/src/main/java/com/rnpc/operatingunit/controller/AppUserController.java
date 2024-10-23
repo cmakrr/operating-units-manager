@@ -54,7 +54,7 @@ public class AppUserController {
     }
 
     @DeleteMapping("{appUserId}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAppUser(@PathVariable Long appUserId) {
         appUserService.deleteById(appUserId);
     }

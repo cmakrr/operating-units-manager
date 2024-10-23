@@ -4,7 +4,6 @@ import com.rnpc.operatingunit.dto.response.operation.OperationFullInfoResponse;
 import com.rnpc.operatingunit.dto.response.operation.OperationShortInfoResponse;
 import com.rnpc.operatingunit.dto.response.operation.OperationStepStatusResponse;
 import com.rnpc.operatingunit.model.Operation;
-import com.rnpc.operatingunit.model.OperationStepStatus;
 import com.rnpc.operatingunit.service.OperationFactService;
 import com.rnpc.operatingunit.service.OperationService;
 import lombok.RequiredArgsConstructor;
@@ -39,11 +38,9 @@ public class OperationController {
         OperationFullInfoResponse operationResponse = modelMapper.map(operation, OperationFullInfoResponse.class);
 
         if (Objects.nonNull(operation.getOperationFact())) {
-            OperationStepStatus step = operationFactService.getCurrentStep(operation.getOperationFact().getId());
-            if (Objects.nonNull(step)) {
-                operationResponse.getOperationFact().setCurrentStep(
-                        modelMapper.map(step, OperationStepStatusResponse.class));
-            }
+            operationFactService.getCurrentStep(operation.getOperationFact().getId()).ifPresent((step) ->
+                    operationResponse.getOperationFact().setCurrentStep(
+                            modelMapper.map(step, OperationStepStatusResponse.class)));
         }
 
         return operationResponse;

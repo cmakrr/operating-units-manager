@@ -5,7 +5,6 @@ import com.rnpc.operatingunit.dto.response.operatingRoom.OperatingRoomIpInfoResp
 import com.rnpc.operatingunit.dto.response.operatingRoom.OperatingRoomResponse;
 import com.rnpc.operatingunit.dto.response.operation.OperationStepStatusResponse;
 import com.rnpc.operatingunit.model.OperatingRoom;
-import com.rnpc.operatingunit.model.OperationStepStatus;
 import com.rnpc.operatingunit.service.OperatingRoomService;
 import com.rnpc.operatingunit.service.OperationFactService;
 import com.rnpc.operatingunit.util.ClientIpUtil;
@@ -66,11 +65,8 @@ public class OperatingRoomController {
                 .filter(room -> Objects.nonNull(room.getCurrentOperation()))
                 .map(room -> room.getCurrentOperation().getOperationFact())
                 .forEach(operationFact -> {
-                    OperationStepStatus step = operationFactService.getCurrentStep(operationFact.getId());
-
-                    if (Objects.nonNull(step)) {
-                        operationFact.setCurrentStep(modelMapper.map(step, OperationStepStatusResponse.class));
-                    }
+                    operationFactService.getCurrentStep(operationFact.getId()).ifPresent((step) ->
+                            operationFact.setCurrentStep(modelMapper.map(step, OperationStepStatusResponse.class)));
                 });
 
         return rooms;
@@ -93,7 +89,7 @@ public class OperatingRoomController {
                 OperatingRoomIpInfoResponse.class);
     }
 
-    @PutMapping("/{operatingRoomId}")
+    @PutMapping("/{operatingRoomId}/ip")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public OperatingRoomIpInfoResponse updateOperatingRoomIp(@PathVariable Long operatingRoomId,
@@ -103,9 +99,17 @@ public class OperatingRoomController {
                 OperatingRoomIpInfoResponse.class);
     }
 
+    @DeleteMapping("/{operatingRoomId}/ip")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public OperatingRoomIpInfoResponse deleteOperatingRoomIp(@PathVariable Long operatingRoomId) {
+        return modelMapper.map(operatingRoomService.setOperatingRoomIpAddress(operatingRoomId, null),
+                OperatingRoomIpInfoResponse.class);
+    }
+
     @DeleteMapping("/{operatingRoomId}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteOperatingRoom(@PathVariable Long operatingRoomId) {
         operatingRoomService.delete(operatingRoomId);
     }

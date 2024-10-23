@@ -6,6 +6,7 @@ import com.rnpc.operatingunit.dto.response.operation.OperationFactResponse;
 import com.rnpc.operatingunit.dto.response.operation.OperationFullInfoResponse;
 import com.rnpc.operatingunit.dto.response.operation.OperationStepStatusResponse;
 import com.rnpc.operatingunit.enums.MedicalWorkerOperationRole;
+import com.rnpc.operatingunit.exception.entity.EntityNotFoundException;
 import com.rnpc.operatingunit.model.Operation;
 import com.rnpc.operatingunit.model.OperationFact;
 import com.rnpc.operatingunit.model.OperationStepStatus;
@@ -34,7 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 
 @Slf4j
@@ -149,9 +149,9 @@ public class OperatingRoomTrackerController {
                                                                    HttpServletRequest request) {
         operatingRoomAccessService.checkOperatingRoomAccess(operationId, ClientIpUtil.getClientIp(request));
 
-        OperationStepStatus step = operationFactService.getCurrentStep(operationFactId);
-
-        return modelMapper.map(step, OperationStepStatusResponse.class);
+        return operationFactService.getCurrentStep(operationFactId)
+                .map(step -> modelMapper.map(step, OperationStepStatusResponse.class))
+                .orElseThrow(() -> new EntityNotFoundException("Current operation step not found"));
     }
 
     @GetMapping("/operations/{operationId}/fact/{operationFactId}")
@@ -163,10 +163,8 @@ public class OperatingRoomTrackerController {
         OperationFact operationFact = operationFactService.getById(operationFactId);
         OperationFactResponse operationFactResponse = modelMapper.map(operationFact, OperationFactResponse.class);
 
-        OperationStepStatus step = operationFactService.getCurrentStep(operationFactId);
-        if (Objects.nonNull(step)) {
-            operationFactResponse.setCurrentStep(modelMapper.map(step, OperationStepStatusResponse.class));
-        }
+        operationFactService.getCurrentStep(operationFactId).ifPresent((step) ->
+                operationFactResponse.setCurrentStep(modelMapper.map(step, OperationStepStatusResponse.class)));
 
         return operationFactResponse;
     }

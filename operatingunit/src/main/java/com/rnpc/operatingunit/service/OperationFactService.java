@@ -5,6 +5,7 @@ import com.rnpc.operatingunit.model.OperationFact;
 import com.rnpc.operatingunit.model.OperationStepStatus;
 
 import java.util.Map;
+import java.util.Optional;
 
 public interface OperationFactService {
     OperationFact getById(Long operationFactId);
@@ -18,7 +19,7 @@ public interface OperationFactService {
 
     OperationFact cancelStart(Long operationId, Long operationFactId);
 
-    OperationStepStatus getCurrentStep(Long operationFactId);
+    Optional<OperationStepStatus> getCurrentStep(Long operationFactId);
 
     OperationStepStatus cancelStep(Long operationFactId, Long stepId);
 
