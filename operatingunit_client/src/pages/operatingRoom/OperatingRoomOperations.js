@@ -237,7 +237,7 @@ function OperatingRoomOperations() {
           {(() => {
             let color = "volcano";
             if (operationStatus === operationStatuses.started) {
-              color = "geek blue";
+              color = "geekblue";
             } else if (operationStatus === operationStatuses.finished) {
               color = "green";
             }

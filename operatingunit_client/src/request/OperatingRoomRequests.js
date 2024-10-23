@@ -1,6 +1,6 @@
 import { serverApi } from "../const/api/serverApi";
 import { clientApi } from "../const/api/clientApi";
-import { sendDeleteRequest, sendGetRequest, sendPostRequest } from "./Requests";
+import {sendDeleteRequest, sendGetRequest, sendPostRequest} from "./Requests";
 import { processResponseError } from "./ErrorProcessor";
 import { message } from "antd";
 import axios from "axios";
@@ -66,11 +66,16 @@ export async function deleteOperatingRoom(id) {
 
 export async function updateOperatingRoomIp(id, ip) {
   try {
-    await axios.put(serverApi.operatingRoom.room(id), ip, {
-      headers: {
-        "Content-Type": "text/plain",
-      },
-    });
+    const url = serverApi.operatingRoom.ip(id);
+    if (ip) {
+      await axios.put(url, ip, {
+        headers: {
+          "Content-Type": "text/plain",
+        },
+      });
+    } else {
+      await sendDeleteRequest(url)
+    }
 
     message.success(<span>{`IP-адрес обновлен успешно!`}</span>);
     setTimeout(() => {

@@ -29,6 +29,11 @@ import { getOperationReport } from "../../../request/ReportRequests";
 
 const immutableOperationInfo = (operation) => [
   {
+    label: "Операционный блок",
+    children: <Card bordered={false}>{operation?.operatingRoom?.name}</Card>,
+    span: 3,
+  },
+  {
     label: "Название операции",
     children: <Card bordered={false}>{operation?.operationName}</Card>,
     span: 3,
@@ -150,13 +155,16 @@ const getValue = (value, planValue) => {
 
 const _editableOperationInfo = (operation) => [
   {
-    label: "Инструменты",
+    label: "Оператор",
     children: OperationPlanEditableFactCards(
-      operation?.instruments,
-      "не установлены",
-      getValue(operation?.operationFact?.instruments, operation?.instruments),
-      "не установлены",
-      "instruments",
+        getMedicalWorkerInfo(operation?.operationPlan?.operator),
+        "не назначен",
+        getValue(
+            getMedicalWorkerInfo(operation?.operationFact?.operator),
+            getMedicalWorkerInfo(operation?.operationPlan?.operator),
+        ),
+        "не назначен",
+        "operatorName",
     ),
     span: 3,
   },
@@ -175,20 +183,6 @@ const _editableOperationInfo = (operation) => [
     span: 3,
   },
   {
-    label: "Оператор",
-    children: OperationPlanEditableFactCards(
-      getMedicalWorkerInfo(operation?.operationPlan?.operator),
-      "не назначен",
-      getValue(
-        getMedicalWorkerInfo(operation?.operationFact?.operator),
-        getMedicalWorkerInfo(operation?.operationPlan?.operator),
-      ),
-      "не назначен",
-      "operatorName",
-    ),
-    span: 3,
-  },
-  {
     label: "Трансфузиолог",
     children: OperationPlanEditableFactCards(
       getMedicalWorkerInfo(operation?.operationPlan?.transfusiologist),
@@ -199,6 +193,17 @@ const _editableOperationInfo = (operation) => [
       ),
       "не назначен",
       "transfusiologistName",
+    ),
+    span: 3,
+  },
+  {
+    label: "Инструменты",
+    children: OperationPlanEditableFactCards(
+        operation?.instruments,
+        "не установлены",
+        getValue(operation?.operationFact?.instruments, operation?.instruments),
+        "не установлены",
+        "instruments",
     ),
     span: 3,
   },

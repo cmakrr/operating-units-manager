@@ -4,6 +4,7 @@ export const serverApi = {
     name: "/api/v1/operatingRoom/name",
     create: `/api/v1/operatingRoom`,
     room: (id) => `/api/v1/operatingRoom/${id}`,
+    ip: (id) => `/api/v1/operatingRoom/${id}/ip`,
     monitoring: "/api/v1/operatingRoom/monitoring",
     rooms: `api/v1/operatingRoom`,
   },

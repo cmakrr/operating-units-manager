@@ -39,7 +39,7 @@ export const OperationDetailsWithFactEditDescriptions = (operation) => {
       name: ["transfusiologistName"],
       value: getMedicalWorkerFactInfo(
         operation?.operationPlan?.transfusiologist,
-        operation?.operationFact?.assistant,
+        operation?.operationFact?.transfusiologist,
       ),
     },
   ];

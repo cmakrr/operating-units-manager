@@ -217,7 +217,7 @@ export const OperatingRoomTable = ({rooms}) => {
                         span: 20,
                     }}
                     onFinish={(values) => {
-                        if (values.ipAddress !== selectedId) {
+                        if (values.ipAddress !== selectedIp) {
                             updateOperatingRoomIp(selectedId, values.ipAddress);
                         } else {
                             message.info(
