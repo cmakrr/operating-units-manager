@@ -14,6 +14,7 @@ import com.rnpc.operatingunit.service.OperatingRoomAccessService;
 import com.rnpc.operatingunit.service.OperationFactService;
 import com.rnpc.operatingunit.service.OperationService;
 import com.rnpc.operatingunit.service.OperationStepStatusService;
+import com.rnpc.operatingunit.util.ClientIpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +53,7 @@ public class OperatingRoomTrackerController {
     @ResponseStatus(HttpStatus.OK)
     public List<OperationFullInfoResponse> getTodayOperations(HttpServletRequest request) {
         List<Operation> operations =
-                operationService.getAllByOperatingRoomIpAndDate(request.getRemoteAddr(), LocalDate.now());
+                operationService.getAllByOperatingRoomIpAndDate(ClientIpUtil.getClientIp(request), LocalDate.now());
 
         return modelMapper.map(operations, new TypeToken<List<OperationFullInfoResponse>>() {}.getType());
     }
@@ -62,7 +63,7 @@ public class OperatingRoomTrackerController {
     public OperationFullInfoResponse getOperation(@PathVariable Long operationId, HttpServletRequest request) {
         Operation operation = operationService.getById(operationId);
         operatingRoomAccessService.checkOperatingRoomAccess(operation.getOperatingRoom().getIp(),
-                request.getRemoteAddr());
+                ClientIpUtil.getClientIp(request));
 
         return modelMapper.map(operation, OperationFullInfoResponse.class);
     }
@@ -70,7 +71,7 @@ public class OperatingRoomTrackerController {
     @PostMapping("/operations/{operationId}/fact")
     @ResponseStatus(HttpStatus.CREATED)
     public OperationFactResponse createOperationFact(@PathVariable Long operationId, HttpServletRequest request) {
-        operatingRoomAccessService.checkOperatingRoomAccess(operationId, request.getRemoteAddr());
+        operatingRoomAccessService.checkOperatingRoomAccess(operationId, ClientIpUtil.getClientIp(request));
 
         OperationFact operationFact = operationFactService.createOperationFactForOperation(operationId);
 
@@ -83,7 +84,7 @@ public class OperatingRoomTrackerController {
                                                      @PathVariable Long operationFactId,
                                                      @Valid @RequestBody OperationFactRequest operationFact,
                                                      HttpServletRequest request) {
-        operatingRoomAccessService.checkOperatingRoomAccess(operationId, request.getRemoteAddr());
+        operatingRoomAccessService.checkOperatingRoomAccess(operationId, ClientIpUtil.getClientIp(request));
 
         OperationFact fact = operationFactService.updateSettableInfo(operationFactId,
                 createMedicalWorkersRoleMap(operationFact), operationFact.getInstruments());
@@ -95,7 +96,7 @@ public class OperatingRoomTrackerController {
     @ResponseStatus(HttpStatus.OK)
     public OperationFactResponse startOperationFact(@PathVariable Long operationId, @PathVariable Long operationFactId,
                                                     HttpServletRequest request) {
-        operatingRoomAccessService.checkOperatingRoomAccess(operationId, request.getRemoteAddr());
+        operatingRoomAccessService.checkOperatingRoomAccess(operationId, ClientIpUtil.getClientIp(request));
 
         OperationFact operationFact = operationFactService.start(operationId, operationFactId);
 
@@ -107,7 +108,7 @@ public class OperatingRoomTrackerController {
     public OperationFactResponse cancelOperationFactStart(@PathVariable Long operationId,
                                                           @PathVariable Long operationFactId,
                                                           HttpServletRequest request) {
-        operatingRoomAccessService.checkOperatingRoomAccess(operationId, request.getRemoteAddr());
+        operatingRoomAccessService.checkOperatingRoomAccess(operationId, ClientIpUtil.getClientIp(request));
 
         OperationFact operationFact = operationFactService.cancelStart(operationId, operationFactId);
 
@@ -119,7 +120,7 @@ public class OperatingRoomTrackerController {
     public OperationStepStatusResponse startNextOperationFactStep(@PathVariable Long operationId,
                                                                   @PathVariable Long operationFactId,
                                                                   HttpServletRequest request) {
-        operatingRoomAccessService.checkOperatingRoomAccess(operationId, request.getRemoteAddr());
+        operatingRoomAccessService.checkOperatingRoomAccess(operationId, ClientIpUtil.getClientIp(request));
 
         OperationStepStatus step = operationFactService.startNextOperationStep(operationFactId);
 
@@ -133,7 +134,7 @@ public class OperatingRoomTrackerController {
                                                                @PathVariable Long stepId,
                                                                @Valid @RequestBody OperationStepRequest stepRequest,
                                                                HttpServletRequest request) {
-        operatingRoomAccessService.checkOperatingRoomAccess(operationId, request.getRemoteAddr());
+        operatingRoomAccessService.checkOperatingRoomAccess(operationId, ClientIpUtil.getClientIp(request));
 
         OperationStepStatus step =
                 operationStepStatusService.setComment(operationFactId, stepId, stepRequest.getComment());
@@ -146,7 +147,7 @@ public class OperatingRoomTrackerController {
     public OperationStepStatusResponse getCurrentOperationFactStep(@PathVariable Long operationId,
                                                                    @PathVariable Long operationFactId,
                                                                    HttpServletRequest request) {
-        operatingRoomAccessService.checkOperatingRoomAccess(operationId, request.getRemoteAddr());
+        operatingRoomAccessService.checkOperatingRoomAccess(operationId, ClientIpUtil.getClientIp(request));
 
         OperationStepStatus step = operationFactService.getCurrentStep(operationFactId);
 
@@ -157,7 +158,7 @@ public class OperatingRoomTrackerController {
     @ResponseStatus(HttpStatus.OK)
     public OperationFactResponse getOperationFact(@PathVariable Long operationId, @PathVariable Long operationFactId,
                                                   HttpServletRequest request) {
-        operatingRoomAccessService.checkOperatingRoomAccess(operationId, request.getRemoteAddr());
+        operatingRoomAccessService.checkOperatingRoomAccess(operationId, ClientIpUtil.getClientIp(request));
 
         OperationFact operationFact = operationFactService.getById(operationFactId);
         OperationFactResponse operationFactResponse = modelMapper.map(operationFact, OperationFactResponse.class);
@@ -176,7 +177,7 @@ public class OperatingRoomTrackerController {
                                                                       @PathVariable Long operationFactId,
                                                                       @PathVariable Long stepId,
                                                                       HttpServletRequest request) {
-        operatingRoomAccessService.checkOperatingRoomAccess(operationId, request.getRemoteAddr());
+        operatingRoomAccessService.checkOperatingRoomAccess(operationId, ClientIpUtil.getClientIp(request));
 
         OperationStepStatus step = operationFactService.cancelStep(operationFactId, stepId);
 
@@ -187,7 +188,7 @@ public class OperatingRoomTrackerController {
     @ResponseStatus(HttpStatus.OK)
     public OperationFactResponse finishOperation(@PathVariable Long operationId,
                                                  @PathVariable Long operationFactId, HttpServletRequest request) {
-        operatingRoomAccessService.checkOperatingRoomAccess(operationId, request.getRemoteAddr());
+        operatingRoomAccessService.checkOperatingRoomAccess(operationId, ClientIpUtil.getClientIp(request));
 
         OperationFact operationFact = operationFactService.finish(operationId, operationFactId);
 

@@ -8,11 +8,12 @@ import com.rnpc.operatingunit.model.OperatingRoom;
 import com.rnpc.operatingunit.model.OperationStepStatus;
 import com.rnpc.operatingunit.service.OperatingRoomService;
 import com.rnpc.operatingunit.service.OperationFactService;
-import jakarta.annotation.Nullable;
+import com.rnpc.operatingunit.util.ClientIpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.http.HttpStatus;
@@ -27,14 +28,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/operatingRoom")
 @RequiredArgsConstructor
+@Slf4j
 public class OperatingRoomController {
-    private static final String JSON_ROOM_NAME = "{\"operatingRoomName\" : \"%s\"}";
+    private static final String ROOM_NAME = "operatingRoomName";
     private static final String INVALID_IP_MESSAGE = "Неверное значение IP-адреса!";
     private static final String IP_ADDRESS_PATTERN =
             "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
@@ -45,10 +49,10 @@ public class OperatingRoomController {
 
     @GetMapping("/name")
     @ResponseStatus(HttpStatus.OK)
-    public String retrieveOperatingRoomNameByIp(HttpServletRequest request) {
-        final String name = operatingRoomService.getOperatingRoomNameByIp(request.getRemoteAddr());
+    public Map<String, String> retrieveOperatingRoomNameByIp(HttpServletRequest request) {
+        final String name = operatingRoomService.getOperatingRoomNameByIp(ClientIpUtil.getClientIp(request));
 
-        return String.format(JSON_ROOM_NAME, name);
+        return Collections.singletonMap(ROOM_NAME, name);
     }
 
     @GetMapping("/monitoring")

@@ -9,7 +9,7 @@ import com.rnpc.operatingunit.model.OperationPlan;
 import com.rnpc.operatingunit.model.OperationStepStatus;
 import com.rnpc.operatingunit.model.Patient;
 import com.rnpc.operatingunit.service.MedicalWorkerService;
-import com.rnpc.operatingunit.utils.DateFormattingUtils;
+import com.rnpc.operatingunit.util.DateFormattingUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.poi.xwpf.usermodel.TableWidthType;
@@ -163,7 +163,7 @@ public class XWPFOperationReportGenerator implements OperationReportGenerator {
     }
 
     private void setGeneralInfo(XWPFTable generalTable, Operation operation) {
-        String dateString = DateFormattingUtils.formatDate(operation.getDate());
+        String dateString = DateFormattingUtil.formatDate(operation.getDate());
         documentGenerator.setParagraph(generalTable.getRow(0).getCell(1).getParagraphs().get(0), dateString);
         documentGenerator.setParagraph(generalTable.getRow(1).getCell(1).getParagraphs().get(0), operation.getOperatingRoom().getName());
         documentGenerator.setParagraph(generalTable.getRow(2).getCell(1).getParagraphs().get(0), operation.getOperationName());
@@ -189,14 +189,14 @@ public class XWPFOperationReportGenerator implements OperationReportGenerator {
     }
 
     private void setOperationInfo(XWPFTable table, LocalDateTime startTime, LocalDateTime endTime, MedicalWorker operator, MedicalWorker assistant, MedicalWorker transfusiologist, String instruments, int column) {
-        String startTimeString = DateFormattingUtils.formatToHoursAndMinutes(startTime);
+        String startTimeString = DateFormattingUtil.formatToHoursAndMinutes(startTime);
         documentGenerator.setParagraph(table.getRow(1).getCell(column).getParagraphs().get(0), startTimeString);
         if (Objects.nonNull(endTime)) {
-            String endTimeString = DateFormattingUtils.formatToHoursAndMinutes(endTime);
+            String endTimeString = DateFormattingUtil.formatToHoursAndMinutes(endTime);
             documentGenerator.setParagraph(table.getRow(2).getCell(column).getParagraphs().get(0), endTimeString);
 
             Duration duration = Duration.between(startTime, endTime);
-            String durationString = DateFormattingUtils.formatRussianDuration(duration);
+            String durationString = DateFormattingUtil.formatRussianDuration(duration);
             documentGenerator.setParagraph(table.getRow(3).getCell(column).getParagraphs().get(0), durationString);
         }
         setMedicalWorkerParagraph(table.getRow(4).getCell(column).getParagraphs().get(0), operator);
@@ -240,15 +240,15 @@ public class XWPFOperationReportGenerator implements OperationReportGenerator {
     private void setOperationStart(XWPFTableRow row, LocalDateTime stepTime, LocalDateTime startTime, int index) {
         documentGenerator.setParagraph(row.getCell(0).getParagraphs().get(0), String.valueOf(index));
         documentGenerator.setParagraph(row.getCell(1).getParagraphs().get(0), OPERATION_START);
-        String startTimeString = DateFormattingUtils.formatToHoursMinutesAndSeconds(startTime);
+        String startTimeString = DateFormattingUtil.formatToHoursMinutesAndSeconds(startTime);
         documentGenerator.setParagraph(row.getCell(2).getParagraphs().get(0), startTimeString);
 
         if (Objects.nonNull(stepTime)) {
-            String stepTimeString = DateFormattingUtils.formatToHoursMinutesAndSeconds(stepTime);
+            String stepTimeString = DateFormattingUtil.formatToHoursMinutesAndSeconds(stepTime);
             documentGenerator.setParagraph(row.getCell(3).getParagraphs().get(0), stepTimeString);
 
             Duration duration = Duration.between(startTime, stepTime);
-            String durationString = DateFormattingUtils.formatRussianDuration(duration);
+            String durationString = DateFormattingUtil.formatRussianDuration(duration);
             documentGenerator.setParagraph(row.getCell(4).getParagraphs().get(0), durationString);
         }
     }
@@ -258,7 +258,7 @@ public class XWPFOperationReportGenerator implements OperationReportGenerator {
         documentGenerator.setParagraph(row.getCell(1).getParagraphs().get(0), OPERATION_END);
 
         if (Objects.nonNull(endTime)) {
-            String endTimeString = DateFormattingUtils.formatToHoursMinutesAndSeconds(endTime);
+            String endTimeString = DateFormattingUtil.formatToHoursMinutesAndSeconds(endTime);
             documentGenerator.setParagraph(row.getCell(3).getParagraphs().get(0), endTimeString);
         }
     }
@@ -268,15 +268,15 @@ public class XWPFOperationReportGenerator implements OperationReportGenerator {
         documentGenerator.setParagraph(row.getCell(1).getParagraphs().get(0), step.getStep().getName().toUpperCase());
 
         if (Objects.nonNull(step.getStartTime())) {
-            String startTimeString = DateFormattingUtils.formatToHoursMinutesAndSeconds(step.getStartTime());
+            String startTimeString = DateFormattingUtil.formatToHoursMinutesAndSeconds(step.getStartTime());
             documentGenerator.setParagraph(row.getCell(2).getParagraphs().get(0), startTimeString);
 
             if (Objects.nonNull(step.getEndTime())) {
-                String endTimeString = DateFormattingUtils.formatToHoursMinutesAndSeconds(step.getEndTime());
+                String endTimeString = DateFormattingUtil.formatToHoursMinutesAndSeconds(step.getEndTime());
                 documentGenerator.setParagraph(row.getCell(3).getParagraphs().get(0), endTimeString);
 
                 Duration duration = Duration.between(step.getStartTime(), step.getEndTime());
-                String durationString = DateFormattingUtils.formatRussianDuration(duration);
+                String durationString = DateFormattingUtil.formatRussianDuration(duration);
                 documentGenerator.setParagraph(row.getCell(4).getParagraphs().get(0), durationString);
             }
             documentGenerator.setParagraph(row.getCell(5).getParagraphs().get(0), step.getComment());

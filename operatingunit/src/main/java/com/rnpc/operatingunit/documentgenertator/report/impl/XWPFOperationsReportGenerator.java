@@ -9,7 +9,7 @@ import com.rnpc.operatingunit.model.OperationFact;
 import com.rnpc.operatingunit.model.Patient;
 import com.rnpc.operatingunit.service.MedicalWorkerService;
 import com.rnpc.operatingunit.service.OperationService;
-import com.rnpc.operatingunit.utils.DateFormattingUtils;
+import com.rnpc.operatingunit.util.DateFormattingUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.logging.log4j.util.Strings;
@@ -106,7 +106,7 @@ public class XWPFOperationsReportGenerator implements OperationsReportGenerator 
             Map<OperatingRoom, List<Operation>> map = finlterOperationsMap.get(date);
 
             if (Objects.nonNull(map)) {
-                String dateString = DateFormattingUtils.formatDate(date);
+                String dateString = DateFormattingUtil.formatDate(date);
                 documentGenerator.setBoldParagraph(document.createParagraph(), dateString);
 
                 int size = map.values().stream().mapToInt(List::size).sum() + map.keySet().size();
@@ -171,10 +171,10 @@ public class XWPFOperationsReportGenerator implements OperationsReportGenerator 
         workers.add(fact.getAssistant());
         workers.add(fact.getTransfusiologist());
 
-        String startTimeString = DateFormattingUtils.formatToHoursAndMinutes(fact.getStartTime());
+        String startTimeString = DateFormattingUtil.formatToHoursAndMinutes(fact.getStartTime());
         documentGenerator.setParagraph(row.getCell(0).getParagraphs().get(0), startTimeString);
         if (Objects.nonNull(fact.getEndTime())) {
-            String endTimeString = DateFormattingUtils.formatToHoursAndMinutes(fact.getEndTime());
+            String endTimeString = DateFormattingUtil.formatToHoursAndMinutes(fact.getEndTime());
             documentGenerator.setParagraph(row.getCell(1).getParagraphs().get(0), endTimeString);
         }
         documentGenerator.setParagraph(row.getCell(2).getParagraphs().get(0), getPatientInfo(operation.getPatient()));

@@ -1,4 +1,4 @@
-package com.rnpc.operatingunit.utils;
+package com.rnpc.operatingunit.util;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
 
@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class DateFormattingUtils {
+public class DateFormattingUtil {
     private static final String HOUR_MINUTE_PATTERN = "H:mm";
     private static final String HOUR_MINUTE_SECOND_PATTERN = HOUR_MINUTE_PATTERN + ":ss";
     private static final String DAY_MONTH_YEAR_PATTERN = "dd.MM.yyyy";
