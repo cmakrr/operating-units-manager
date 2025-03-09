@@ -45,7 +45,7 @@ public class SecurityConfiguration {
 
                     return corsConfig;
                 })).authorizeHttpRequests(request -> request
-                        .requestMatchers("api/v1/auth/login").permitAll()
+                        .requestMatchers("api/v1/auth/login", "api/v1/auth/test").permitAll()
                         .requestMatchers("api/v1/auth/register-user")
                         .hasAnyAuthority("ADMIN", "GENERAL_MANAGER")
                         .requestMatchers("/api/v1/tracker/operatingRoom/**").hasAuthority("TRACKER")
@@ -55,6 +55,8 @@ public class SecurityConfiguration {
                         .hasAnyAuthority("ADMIN", "GENERAL_MANAGER")
                         .requestMatchers("/api/v1/operations/**").hasAnyAuthority(
                                 "ADMIN", "GENERAL_MANAGER", "MANAGER", "PLAN_CREATOR")
+                        .requestMatchers("/api/v1/admin/**")
+                        .hasAuthority("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider())

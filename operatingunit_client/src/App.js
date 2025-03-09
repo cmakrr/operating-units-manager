@@ -19,7 +19,7 @@ import OperatingRoomPage from "./pages/manager/OperatingRoomPage";
 import UsersByRolePage from "./pages/manager/UsersByRolePage";
 import {getAuthHeader, getToken} from "./functions/Token";
 
-axios.defaults.baseURL = `http://192.168.0.104:80`;
+axios.defaults.baseURL = `http://localhost:80`;
 
 axios.defaults.formSerializer = (data) => {
   return JSON.stringify(data);
