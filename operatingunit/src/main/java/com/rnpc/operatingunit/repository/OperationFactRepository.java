@@ -1,10 +1,6 @@
 package com.rnpc.operatingunit.repository;
 
-import com.rnpc.operatingunit.model.MedicalWorker;
 import com.rnpc.operatingunit.model.OperationFact;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

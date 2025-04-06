@@ -4,6 +4,7 @@ import com.rnpc.operatingunit.enums.MedicalWorkerOperationRole;
 import com.rnpc.operatingunit.model.MedicalWorker;
 import com.rnpc.operatingunit.model.OperationFact;
 import com.rnpc.operatingunit.model.OperationPlan;
+import com.rnpc.operatingunit.model.WorkerStatus;
 import com.rnpc.operatingunit.repository.MedicalWorkerRepository;
 import com.rnpc.operatingunit.service.MedicalWorkerService;
 import com.rnpc.operatingunit.service.PersonService;
@@ -13,11 +14,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,6 +93,36 @@ public class DefaultMedicalWorkerService implements MedicalWorkerService {
         workers.put(MedicalWorkerOperationRole.TRANSFUSIOLOGIST, transfusiologistName);
 
         return workers;
+    }
+
+    @Override
+    public MedicalWorker findById(Long id) {
+        return medicalWorkerRepository.findById(id).get();
+    }
+
+    @Override
+    public void save(MedicalWorker medicalWorker) {
+        medicalWorkerRepository.save(medicalWorker);
+    }
+
+    @Override
+    public List<MedicalWorker> findAll() {
+        return medicalWorkerRepository.findAll();
+    }
+
+    @Override
+    public List<MedicalWorker> findByStatus(WorkerStatus status) {
+        return medicalWorkerRepository.findByWorkerStatus(status);
+    }
+
+    @Override
+    public List<MedicalWorker> findByFullNameContaining(String name) {
+        return medicalWorkerRepository.findByFullNameContaining(name);
+    }
+
+    @Override
+    public List<MedicalWorker> findAvailableWorkers(LocalDateTime start, LocalDateTime end) {
+        return medicalWorkerRepository.findFreeWorkers(start, end);
     }
 
     private MedicalWorker getMedicalWorker(String name) {

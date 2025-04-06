@@ -17,6 +17,7 @@ import java.util.Objects;
 public class MedicalWorker extends Person {
     @Column(name = "mw_role", unique = true)
     private String role;
+    private WorkerStatus workerStatus;
 
     @Override
     public boolean equals(Object obj) {

@@ -1,7 +1,6 @@
 package com.rnpc.operatingunit.adminpanel;
 
 import com.rnpc.operatingunit.dto.response.appUser.AppUserResponse;
-import com.rnpc.operatingunit.model.AppUser;
 import com.rnpc.operatingunit.service.AppUserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

@@ -1,12 +1,11 @@
 package com.rnpc.operatingunit.service.impl;
 
+import com.rnpc.operatingunit.dto.request.operation.OperationRequest;
+import com.rnpc.operatingunit.dto.response.operation.OperationAvailableInfoResponse;
+import com.rnpc.operatingunit.enums.OperationStepStatusName;
 import com.rnpc.operatingunit.exception.operation.OperationNotFoundException;
 import com.rnpc.operatingunit.exception.plan.OperationPlanCantBeModifiedException;
-import com.rnpc.operatingunit.model.OperatingRoom;
-import com.rnpc.operatingunit.model.Operation;
-import com.rnpc.operatingunit.model.OperationFact;
-import com.rnpc.operatingunit.model.OperationPlan;
-import com.rnpc.operatingunit.model.Patient;
+import com.rnpc.operatingunit.model.*;
 import com.rnpc.operatingunit.repository.OperationRepository;
 import com.rnpc.operatingunit.service.MedicalWorkerService;
 import com.rnpc.operatingunit.service.OperatingRoomService;
@@ -23,15 +22,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -121,6 +112,57 @@ public class DefaultOperationService implements OperationService {
         operation.setOperationFact(operationFact);
 
         operationRepository.save(operation);
+    }
+
+    @Override
+    public void save(OperationRequest operationRequest) {
+        Operation operation = new Operation();
+
+        MedicalWorker transfusiologist = medicalWorkerService.findById(operationRequest.getTransfusiologistId());
+        MedicalWorker assistant = medicalWorkerService.findById(operationRequest.getAssistantId());
+        MedicalWorker operator = medicalWorkerService.findById(operationRequest.getOperatorId());
+
+        OperationPlan plan = new OperationPlan();
+        plan.setTransfusiologist(transfusiologist);
+        plan.setOperator(operator);
+        plan.setAssistant(assistant);
+        plan.setEndTime(operationRequest.getEndTime());
+        plan.setStartTime(operationRequest.getStartTime());
+
+        OperationFact fact = new OperationFact();
+        fact.setTransfusiologist(transfusiologist);
+        fact.setOperator(operator);
+        fact.setAssistant(assistant);
+        fact.setEndTime(operationRequest.getEndTime());
+        fact.setStartTime(operationRequest.getStartTime());
+        fact.setInstruments(operationRequest.getInstruments());
+        Set<OperationStepStatus> steps = operationRequest.getSteps().stream()
+                .map(x -> {
+                    OperationStepStatus status = new OperationStepStatus();
+                    status.setComment(x.getComment());
+                    status.setStatus(OperationStepStatusName.NOT_STARTED);
+                    status.setStartTime(x.getStartTime());
+                    status.setEndTime(x.getEndTime());
+                    return status;
+                })
+                .collect(Collectors.toSet());
+        fact.setSteps(steps);
+
+        operation.setOperationName(operationRequest.getOperationName());
+        operation.setDate(operationRequest.getDate());
+        operation.setPatient(patientService.getPatient(operationRequest.getPatientId()));
+
+        operationRepository.save(operation);
+    }
+
+    @Override
+    public OperationAvailableInfoResponse getAvailableInfo(LocalDateTime start, LocalDateTime end) {
+        List<MedicalWorker> freeWorkers = medicalWorkerService.findAvailableWorkers(start, end);
+        List<OperatingRoom> freeRooms = operatingRoomService.findFreeRooms(start, end);
+        OperationAvailableInfoResponse response = new OperationAvailableInfoResponse();
+        response.setAvailableWorkers(freeWorkers);
+        response.setFreeOperatingRooms(freeRooms);
+        return response;
     }
 
     private Set<OperatingRoom> findConflictOperatingRooms(List<Operation> existingOperations,

@@ -4,7 +4,10 @@ import com.rnpc.operatingunit.enums.MedicalWorkerOperationRole;
 import com.rnpc.operatingunit.model.MedicalWorker;
 import com.rnpc.operatingunit.model.OperationFact;
 import com.rnpc.operatingunit.model.OperationPlan;
+import com.rnpc.operatingunit.model.WorkerStatus;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,4 +28,15 @@ public interface MedicalWorkerService {
     Map<MedicalWorkerOperationRole, String> createMedicalWorkersRoleMap(String operatorName, String assistantName,
                                                                         String transfusiologistName);
 
+    MedicalWorker findById(Long id);
+
+    void save(MedicalWorker medicalWorker);
+
+    List<MedicalWorker> findAll();
+
+    List<MedicalWorker> findByStatus(WorkerStatus status);
+
+    List<MedicalWorker> findByFullNameContaining(String name);
+
+    List<MedicalWorker> findAvailableWorkers(LocalDateTime start, LocalDateTime end);
 }

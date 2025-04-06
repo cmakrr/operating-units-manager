@@ -1,11 +1,14 @@
 package com.rnpc.operatingunit.repository;
 
+import com.rnpc.operatingunit.enums.OperatingRoomStatus;
 import com.rnpc.operatingunit.model.OperatingRoom;
 import io.hypersistence.utils.hibernate.type.basic.Inet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface OperatingRoomRepository extends JpaRepository<OperatingRoom, Long> {
@@ -13,6 +16,14 @@ public interface OperatingRoomRepository extends JpaRepository<OperatingRoom, Lo
 
     Optional<OperatingRoom> findByIp(Inet ip);
 
+    List<OperatingRoom> findByStatus(OperatingRoomStatus status);
+
     @Query("SELECT EXISTS( SELECT 1 FROM Operation o WHERE o.operatingRoom.id=:id )")
     boolean wasUsed(@Param("id") Long id);
+
+    @Query("SELECT oroom FROM operation_room oroom WHERE NOT EXISTS (" +
+            "SELECT 1 FROM operation_fact ofact JOIN operation o ON ofact.id = o.o_operation_fact_id " +
+            "WHERE ofact.of_start_time > :start AND ofact.of_end_time < :end " +
+            "AND o.o_operation_room_id = oroom.id)")
+    List<OperatingRoom> findFreeRooms(LocalDateTime start, LocalDateTime end);
 }

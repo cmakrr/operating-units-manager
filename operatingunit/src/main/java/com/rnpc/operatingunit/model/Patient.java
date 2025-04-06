@@ -22,6 +22,7 @@ public class Patient extends Person {
     private LocalDate birthYear;
     @Column(name = "p_room_number")
     private int roomNumber;
+    private String description;
 
     @Override
     public boolean equals(Object obj) {

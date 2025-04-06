@@ -9,6 +9,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -33,6 +34,26 @@ public class DefaultPatientService implements PatientService {
         }
 
         return patient;
+    }
+
+    @Override
+    public void savePatient(Patient patient) {
+        patientRepository.save(patient);
+    }
+
+    @Override
+    public Patient getPatient(Long id) {
+        return patientRepository.findById(id).get();
+    }
+
+    @Override
+    public List<Patient> findAll() {
+        return patientRepository.findAll();
+    }
+
+    @Override
+    public List<Patient> findByFullNameContaining(String name) {
+        return patientRepository.findByFullNameContaining(name);
     }
 
     public int getPatientAgeOrBirthYear(Patient patient) {

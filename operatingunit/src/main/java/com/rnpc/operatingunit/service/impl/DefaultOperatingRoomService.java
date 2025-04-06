@@ -1,6 +1,7 @@
 package com.rnpc.operatingunit.service.impl;
 
 import com.rnpc.operatingunit.enums.AccessRoleType;
+import com.rnpc.operatingunit.enums.OperatingRoomStatus;
 import com.rnpc.operatingunit.exception.entity.EntityNotFoundException;
 import com.rnpc.operatingunit.exception.operatingRoom.OperatingRoomIpAddressDuplicateException;
 import com.rnpc.operatingunit.exception.operatingRoom.OperatingRoomManageException;
@@ -19,6 +20,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -83,6 +85,16 @@ public class DefaultOperatingRoomService implements OperatingRoomService {
         } else {
             throw new OperatingRoomIpAddressDuplicateException(ip, roomWithIp.getName(), operatingRoom.getName());
         }
+    }
+
+    @Override
+    public List<OperatingRoom> findByStatus(OperatingRoomStatus status) {
+        return operatingRoomRepository.findByStatus(status);
+    }
+
+    @Override
+    public List<OperatingRoom> findFreeRooms(LocalDateTime start, LocalDateTime end) {
+        return operatingRoomRepository.findFreeRooms(start, end);
     }
 
     @Transactional
