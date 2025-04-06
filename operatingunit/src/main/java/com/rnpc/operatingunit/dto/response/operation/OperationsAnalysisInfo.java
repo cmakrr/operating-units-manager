@@ -7,13 +7,14 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class OperationsAnalysisInfo {
-    private List<OperationAnalysisInfo> operations;
+    private Map<LocalDate, List<OperationInfo>> operations;
     private LocalDate analysisStart;
     private LocalDate analysisEnd;
 }

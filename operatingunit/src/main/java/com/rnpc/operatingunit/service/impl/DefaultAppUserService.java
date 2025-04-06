@@ -160,7 +160,7 @@ public class DefaultAppUserService implements AppUserService {
     }
 
     private boolean isValidHierarchyPositionForAction(int current, int another) {
-        return current >= another;
+        return current > another;
     }
 
     private void throwUnauthorizedActionException(String role) {

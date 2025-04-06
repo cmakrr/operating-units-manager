@@ -25,7 +25,7 @@ public class OperatingRoomAnalyzerService {
 
     public OperationsOverallAnalysis createOverallAnalysis(String room, LocalDate start, LocalDate end){
         List<Operation> operations = findRoomOperations(room, start, end);
-        return operationsAnalyzerService.createOperationsOverallAnalysis(operations);
+        return operationsAnalyzerService.createOperationsOverallAnalysis(operations, start, end);
     }
 
     public OperationsAnalysisInfo createAnalysisInfo(String room, LocalDate start, LocalDate end){

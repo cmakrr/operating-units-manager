@@ -1,0 +1,48 @@
+package com.rnpc.operatingunit.analyzer.controller;
+
+import com.rnpc.operatingunit.analyzer.operatingrooms.OperatingRoomAnalyzerService;
+import com.rnpc.operatingunit.analyzer.operations.OperationsAnalyzerService;
+import com.rnpc.operatingunit.analyzer.workers.WorkersAnalyzerService;
+import com.rnpc.operatingunit.dto.response.operation.OperationsAnalysisInfo;
+import com.rnpc.operatingunit.dto.response.operation.OperationsOverallAnalysis;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("api/v1/analysis")
+public class AnalysisController {
+    private final OperationsAnalyzerService operationsAnalyzerService;
+    private final OperatingRoomAnalyzerService operatingRoomAnalyzerService;
+    private final WorkersAnalyzerService workersAnalyzerService;
+
+    @GetMapping("/worker/{id}")
+    public OperationsAnalysisInfo getWorkerOperationsAnalysis(@PathVariable Long id, @RequestBody AnalysisRequest request) {
+        return workersAnalyzerService.createAnalysisInfo(id, request.getStartDate(), request.getEndDate());
+    }
+
+    @GetMapping("/worker/overall/{id}")
+    public OperationsOverallAnalysis getWorkerOverallAnalysis(@PathVariable Long id, @RequestBody AnalysisRequest request) {
+        return workersAnalyzerService.createOverallAnalysis(id, request.getStartDate(), request.getEndDate());
+    }
+
+    @GetMapping("/room/{name}")
+    public OperationsAnalysisInfo getOperationRoomOperationsAnalysis(@PathVariable String name, @RequestBody AnalysisRequest request) {
+        return operatingRoomAnalyzerService.createAnalysisInfo(name, request.getStartDate(), request.getEndDate());
+    }
+
+    @GetMapping("/room/overall/{name}")
+    public OperationsOverallAnalysis getOperationRoomOverallAnalysis(@PathVariable String name, @RequestBody AnalysisRequest request) {
+        return operatingRoomAnalyzerService.createOverallAnalysis(name, request.getStartDate(), request.getEndDate());
+    }
+
+    @GetMapping
+    public OperationsAnalysisInfo getOperationsAnalysis(@RequestBody AnalysisRequest request) {
+        return operationsAnalyzerService.createOperationsAnalysisInfo(request.getStartDate(), request.getEndDate());
+    }
+
+    @GetMapping("/overall")
+    public OperationsOverallAnalysis getOperationsOverallAnalysis(@RequestBody AnalysisRequest request) {
+        return operationsAnalyzerService.createOperationsOverallAnalysis(request.getStartDate(), request.getEndDate());
+    }
+}

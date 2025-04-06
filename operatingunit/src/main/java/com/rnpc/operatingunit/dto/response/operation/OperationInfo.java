@@ -11,8 +11,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class OperationAnalysisInfo {
+public class OperationInfo {
     private String operationRoom;
+    private String operationName;
     private LocalDate operationDate;
     private int operationSteps;
     private int minutesDuration;

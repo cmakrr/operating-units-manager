@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @Data
 public class OperationsOverallAnalysis {
     private int allOperationsCount;
-    private int allOperationsDuration;
     private int allOperationsTimeInMinutes;
-    private float averageOperationHoursPerDay;
+    private int averageOperationDurationInMinutes;
+    private int averageOperationMinutesPerDay;
     private float averageOperationSteps;
     private float averageOperationsPerDay;
 }

@@ -23,18 +23,18 @@ public class WorkersAnalyzerService {
     private final OperationFactRepository factRepository;
     private final OperationRepository operationRepository;
 
-    public OperationsOverallAnalysis createOverallAnalysis(String workerName, String workerRole, LocalDate start, LocalDate end){
-        List<Operation> operations = findWorkerOperations(workerName, workerRole, start, end);
-        return operationsAnalyzerService.createOperationsOverallAnalysis(operations);
+    public OperationsOverallAnalysis createOverallAnalysis(Long workerId, LocalDate start, LocalDate end){
+        List<Operation> operations = findWorkerOperations(workerId, start, end);
+        return operationsAnalyzerService.createOperationsOverallAnalysis(operations, start, end);
     }
 
-    public OperationsAnalysisInfo createAnalysisInfo(String workerName, String workerRole, LocalDate start, LocalDate end){
-        List<Operation> operations = findWorkerOperations(workerName, workerRole, start, end);
+    public OperationsAnalysisInfo createAnalysisInfo(Long workerId, LocalDate start, LocalDate end){
+        List<Operation> operations = findWorkerOperations(workerId, start, end);
         return operationsAnalyzerService.createOperationsAnalysisInfo(operations, start, end);
     }
 
-    private List<Operation> findWorkerOperations(String workerName, String workerRole, LocalDate start, LocalDate end){
-        Optional<MedicalWorker> worker = medicalWorkerRepository.findByFullNameAndRole(workerName, workerRole);
+    private List<Operation> findWorkerOperations(Long id, LocalDate start, LocalDate end){
+        Optional<MedicalWorker> worker = medicalWorkerRepository.findById(id);
         if(worker.isEmpty()){
             return null;
         }

@@ -25,7 +25,9 @@ public interface OperationRepository extends JpaRepository<Operation, Long> {
 
     List<Operation> findAllByDateAndOperationFact_StartTimeIsNotNullAndOperationFact_EndTimeIsNull(LocalDate date);
 
-    @Query("SELECT e FROM operation e WHERE e.o_date BETWEEN :startDate AND :endDate AND e.o_operation_room_id = :roomId" )
+    List<Operation> findByDateBetween(LocalDate startDate, LocalDate endDate);
+
+    @Query("SELECT e FROM operations e WHERE e.o_date BETWEEN :startDate AND :endDate AND e.o_operation_room_id = :roomId" )
     List<Operation> findBetweenDatesInOperatingRoom(@Param("startDate") LocalDate startDate,
                                              @Param("endDate") LocalDate endDate,
                                                     @Param("roomId") Long roomId);
