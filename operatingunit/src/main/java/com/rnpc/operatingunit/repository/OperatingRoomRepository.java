@@ -21,9 +21,9 @@ public interface OperatingRoomRepository extends JpaRepository<OperatingRoom, Lo
     @Query("SELECT EXISTS( SELECT 1 FROM Operation o WHERE o.operatingRoom.id=:id )")
     boolean wasUsed(@Param("id") Long id);
 
-    @Query("SELECT oroom FROM operation_room oroom WHERE NOT EXISTS (" +
-            "SELECT 1 FROM operation_fact ofact JOIN operation o ON ofact.id = o.o_operation_fact_id " +
-            "WHERE ofact.of_start_time > :start AND ofact.of_end_time < :end " +
-            "AND o.o_operation_room_id = oroom.id)")
+    @Query("SELECT oroom FROM OperatingRoom oroom WHERE NOT EXISTS (" +
+            "SELECT 1 FROM OperationFact ofact JOIN Operation o ON ofact.id = o.operationFact.id " +
+            "WHERE ofact.startTime > :start AND ofact.endTime < :end " +
+            "AND o.operatingRoom.id = oroom.id)")
     List<OperatingRoom> findFreeRooms(LocalDateTime start, LocalDateTime end);
 }

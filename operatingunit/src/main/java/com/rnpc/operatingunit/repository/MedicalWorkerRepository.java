@@ -20,8 +20,10 @@ public interface MedicalWorkerRepository extends JpaRepository<MedicalWorker, Lo
 
     List<MedicalWorker> findByFullNameContaining(String name);
 
-    @Query("SELECT medical_worker FROM medical_worker mw WHERE NOT EXISTS (SELECT 1 FROM operation_plan op " +
-            "WHERE (op.op_operator_id = mw.id OR op.op_assistant_id = mw.id OR op.op_transfusiologist_id = mw.id)  " +
-            "AND (op.op_start_time < :end AND op.op_end_time > :start))" )
+    Optional<MedicalWorker> findByFullName(String name);
+
+    @Query("SELECT mw FROM MedicalWorker mw WHERE NOT EXISTS (SELECT 1 FROM OperationPlan op " +
+            "WHERE (op.operator.id = mw.id OR op.assistant.id = mw.id OR op.transfusiologist.id = mw.id)  " +
+            "AND (op.startTime < :end AND op.endTime > :start))" )
     List<MedicalWorker> findFreeWorkers(LocalDateTime start, LocalDateTime end);
 }

@@ -4,6 +4,7 @@ import com.rnpc.operatingunit.enums.AccessRoleType;
 import com.rnpc.operatingunit.exception.entity.EntityDuplicateException;
 import com.rnpc.operatingunit.exception.entity.EntityNotFoundException;
 import com.rnpc.operatingunit.exception.UnauthorizedAction;
+import com.rnpc.operatingunit.model.AccessRole;
 import com.rnpc.operatingunit.model.AppUser;
 import com.rnpc.operatingunit.repository.AccessRoleRepository;
 import com.rnpc.operatingunit.repository.AppUserRepository;
@@ -76,10 +77,8 @@ public class DefaultAppUserService implements AppUserService {
 
     @Override
     public List<AppUser> getByRoleIn(List<String> roles) {
-        List<AccessRoleType> roleTypes = roles.stream()
-                .map(role->AccessRoleType.valueOf(role.toUpperCase()))
-                .toList();
-        return appUserRepository.findAllByRoleIn_RoleIn(roleTypes);
+        List<AccessRole> roleEntities = accessRoleRepository.findAll();
+        return appUserRepository.findAllByRoleIn(roleEntities);
     }
 
 

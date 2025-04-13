@@ -3,6 +3,7 @@ package com.rnpc.operatingunit.service.impl;
 import com.rnpc.operatingunit.dto.request.operation.OperationRequest;
 import com.rnpc.operatingunit.dto.response.operation.OperationAvailableInfoResponse;
 import com.rnpc.operatingunit.enums.OperationStepStatusName;
+import com.rnpc.operatingunit.enums.PatientStatus;
 import com.rnpc.operatingunit.exception.operation.OperationNotFoundException;
 import com.rnpc.operatingunit.exception.plan.OperationPlanCantBeModifiedException;
 import com.rnpc.operatingunit.model.*;
@@ -91,7 +92,14 @@ public class DefaultOperationService implements OperationService {
     }
 
     public Operation save(Operation operation) {
+        updatePatientStatus(operation);
         return operationRepository.save(operation);
+    }
+
+    private void updatePatientStatus(Operation operation){
+        if(operation.getDate().isAfter(LocalDate.now()) || operation.getDate().equals(LocalDate.now())){
+            operation.getPatient().setStatus(PatientStatus.IN_HOSPITAL);
+        }
     }
 
     @Override
@@ -110,7 +118,7 @@ public class DefaultOperationService implements OperationService {
 
     public void setOperationFact(@Nonnull Operation operation, OperationFact operationFact) {
         operation.setOperationFact(operationFact);
-
+        updatePatientStatus(operation);
         operationRepository.save(operation);
     }
 
@@ -151,7 +159,7 @@ public class DefaultOperationService implements OperationService {
         operation.setOperationName(operationRequest.getOperationName());
         operation.setDate(operationRequest.getDate());
         operation.setPatient(patientService.getPatient(operationRequest.getPatientId()));
-
+        updatePatientStatus(operation);
         operationRepository.save(operation);
     }
 
@@ -221,7 +229,7 @@ public class DefaultOperationService implements OperationService {
             trySetLastOperationEndTimeIfNot(sortedByStartTimeOperations.get(sortedByStartTimeOperations.size() - 1));
 
             operations.forEach(this::populateMedicalWorkersAndPatientAndOperatingRoom);
-
+            operations.forEach(this::updatePatientStatus);
 
             operationRepository.saveAll(operations);
             log.info("Saved [{}] operations", operations.size());

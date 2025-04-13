@@ -25,7 +25,7 @@ public class AdminController {
 
     @GetMapping("/roles")
     public List<AppUserResponse> findAllByRoles(@RequestParam("roles") List<String> roles){
-        return userService.getByRoleIn(roles)
+        return userService. getByRoleIn(roles)
                 .stream()
                 .map(user->modelMapper.map(user, AppUserResponse.class))
                 .toList();

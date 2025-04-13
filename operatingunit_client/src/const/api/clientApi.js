@@ -25,5 +25,6 @@ export const clientApi = {
       `/management/statistics?startDate=${startDate}&endDate=${endDate}`,
     monitoring: `/management/monitoring`,
     users: (role) => `/management/users/${role}`,
+    patients: `/management/patients`
   },
 };

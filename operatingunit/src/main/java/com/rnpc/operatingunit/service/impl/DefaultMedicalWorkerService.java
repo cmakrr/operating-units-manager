@@ -73,7 +73,8 @@ public class DefaultMedicalWorkerService implements MedicalWorkerService {
 
     public MedicalWorker setOperationPlanMedicalWorkerByRole(OperationPlan operationPlan, String name,
                                                              MedicalWorkerOperationRole role) {
-        MedicalWorker medicalWorker = getMedicalWorker(name);
+        Optional<MedicalWorker> optionalMedicalWorker = tryFindMedicalWorkerByName(name);
+        MedicalWorker medicalWorker = optionalMedicalWorker.orElse(getMedicalWorker(name));
 
         switch (role) {
             case OPERATOR -> operationPlan.setOperator(medicalWorker);
@@ -82,6 +83,20 @@ public class DefaultMedicalWorkerService implements MedicalWorkerService {
         }
 
         return medicalWorker;
+    }
+
+    private Optional<MedicalWorker> tryFindMedicalWorkerByName(String name){
+        Optional<MedicalWorker> result;
+        try{
+            Long id = Long.parseLong(name);
+            result = medicalWorkerRepository.findById(id);
+        } catch (Exception e){
+            result = Optional.empty();
+        }
+        if(result.isEmpty()){
+            return medicalWorkerRepository.findByFullName(name);
+        }
+        return result;
     }
 
     public Map<MedicalWorkerOperationRole, String> createMedicalWorkersRoleMap(String operatorName,
@@ -126,6 +141,7 @@ public class DefaultMedicalWorkerService implements MedicalWorkerService {
     }
 
     private MedicalWorker getMedicalWorker(String name) {
+
         MedicalWorker medicalWorker = new MedicalWorker();
 
         if (StringUtils.isNotBlank(name)) {

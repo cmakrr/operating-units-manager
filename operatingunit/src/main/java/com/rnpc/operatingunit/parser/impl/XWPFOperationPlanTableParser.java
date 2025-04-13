@@ -4,11 +4,7 @@ import com.rnpc.operatingunit.enums.MedicalWorkerOperationRole;
 import com.rnpc.operatingunit.enums.OperationInfoColumnName;
 import com.rnpc.operatingunit.exception.plan.MissingPlanColumnsException;
 import com.rnpc.operatingunit.exception.plan.OperatingRoomNotSetException;
-import com.rnpc.operatingunit.model.OperatingRoom;
-import com.rnpc.operatingunit.model.Operation;
-import com.rnpc.operatingunit.model.OperationInfoColumn;
-import com.rnpc.operatingunit.model.OperationPlan;
-import com.rnpc.operatingunit.model.Patient;
+import com.rnpc.operatingunit.model.*;
 import com.rnpc.operatingunit.parser.OperationPlanTableParser;
 import com.rnpc.operatingunit.parser.PatientDetailsParser;
 import com.rnpc.operatingunit.service.MedicalWorkerService;
@@ -27,19 +23,12 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static com.rnpc.operatingunit.parser.constants.OperationPlanParserConstants.Formatter.TIME_FORMATTER;
-import static com.rnpc.operatingunit.parser.constants.OperationPlanParserConstants.Regexp.HYPHEN_ONE_OR_MORE_REGEX;
-import static com.rnpc.operatingunit.parser.constants.OperationPlanParserConstants.Regexp.SPACE_CHARACTER_REGEX;
-import static com.rnpc.operatingunit.parser.constants.OperationPlanParserConstants.Regexp.TIME_INTERVAL_REGEX;
-import static com.rnpc.operatingunit.parser.constants.OperationPlanParserConstants.Symbols.DOT;
-import static com.rnpc.operatingunit.parser.constants.OperationPlanParserConstants.Symbols.HYPHEN;
-import static com.rnpc.operatingunit.parser.constants.OperationPlanParserConstants.Symbols.WHITESPACE;
+import static com.rnpc.operatingunit.parser.constants.OperationPlanParserConstants.Regexp.*;
+import static com.rnpc.operatingunit.parser.constants.OperationPlanParserConstants.Symbols.*;
 
 @Component
 @RequiredArgsConstructor
@@ -125,8 +114,14 @@ public class XWPFOperationPlanTableParser implements OperationPlanTableParser {
                 switch (cellName) {
                     case OPERATION_TIME_INTERVAL ->
                             populateOperationPlanTimeInterval(operation.getOperationPlan(), operationDate, cellValue);
-                    case PATIENT_DETAILS ->
+                    case PATIENT_DETAILS -> {
+                        Optional<Patient> patient = patientDetailsParser.tryFindByFullName(cellValue);
+                        if (patient.isPresent()) {
+                            operation.setPatient(patient.get());
+                        } else {
                             patientDetailsParser.updatePatientFromDetails(operation.getPatient(), cellValue);
+                        }
+                    }
                     case PATIENT_ROOM_NUMBER ->
                             patientDetailsParser.setPatientRoomNumber(operation.getPatient(), cellValue);
                     case OPERATION_NAME -> operation.setOperationName(cellValue);

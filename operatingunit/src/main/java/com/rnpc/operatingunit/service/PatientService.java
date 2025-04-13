@@ -11,9 +11,11 @@ public interface PatientService {
 
     Patient getPatient(Long id);
 
-    List<Patient> findAll();
+    List<Patient> findAllPatientsInHospital();
 
     List<Patient> findByFullNameContaining(String name);
+
+    void dispatchPatient(Long id);
 
     int getPatientAgeOrBirthYear(Patient patient);
 }

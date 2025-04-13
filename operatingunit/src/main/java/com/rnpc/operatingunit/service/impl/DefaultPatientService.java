@@ -1,5 +1,6 @@
 package com.rnpc.operatingunit.service.impl;
 
+import com.rnpc.operatingunit.enums.PatientStatus;
 import com.rnpc.operatingunit.model.Patient;
 import com.rnpc.operatingunit.repository.PatientRepository;
 import com.rnpc.operatingunit.service.PatientService;
@@ -47,13 +48,22 @@ public class DefaultPatientService implements PatientService {
     }
 
     @Override
-    public List<Patient> findAll() {
-        return patientRepository.findAll();
+    public List<Patient> findAllPatientsInHospital() {
+        return patientRepository.findByStatus(PatientStatus.IN_HOSPITAL);
     }
+
+
 
     @Override
     public List<Patient> findByFullNameContaining(String name) {
         return patientRepository.findByFullNameContaining(name);
+    }
+
+    @Override
+    public void dispatchPatient(Long id) {
+        Patient patient = patientRepository.findById(id).get();
+        patient.setStatus(PatientStatus.OUT_OF_HOSPITAL);
+        patientRepository.save(patient);
     }
 
     public int getPatientAgeOrBirthYear(Patient patient) {

@@ -51,4 +51,8 @@ export const serverApi = {
     create: `api/v1/auth/register-user`,
     userById: (id) => `api/v1/appUsers/${id}`,
   },
+  patient: {
+    getAllInHospital: `api/v1/patient/all`,
+    dispatchById: (id) =>  `api/v1/patient/dispatch/${id}`
+  }
 };
