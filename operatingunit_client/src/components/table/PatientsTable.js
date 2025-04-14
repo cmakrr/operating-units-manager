@@ -4,32 +4,32 @@ import React, {useRef, useState} from "react";
 import {SearchOutlined,} from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import {compareStrings} from "../../functions/Utils";
-import {clientApi} from "../../const/api/clientApi";
 import {dischargePatient} from "../../request/PatientRequests";
+import {compareDates, compareNumbers} from "../../utils/compareUtils";
 
-async function dischargePatientById(id) {
+async function dischargePatientById(id, patients, setPatients) {
     dischargePatient(id);
 
     message.success(<span>{`Пациент был выписан успешно!`}</span>);
 
-    setTimeout(() => {
-        window.location.replace(clientApi.manager.patients);
-    }, 1200);
+    removePatient(id, patients, setPatients)
 }
 
-export const PatientsTable = ({patients}) => {
+function removePatient(id, patients, setPatients){
+    const newPatients = patients.filter(x=>x.id !== id);
+    setPatients(newPatients);
+}
+
+export const PatientsTable = ({patientEntities, setPatients}) => {
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
     const [sortedInfo, setSortedInfo] = useState({});
     const searchInput = useRef(null);
 
-    patients = patients?.map((patient) => ({
+    const patients = patientEntities?.map((patient) => ({
         ...patient,
         idd: patient.id,
-        fullName: patient.fullName,
-        birthYear: patient.birthYear,
-        roomNumber: patient.roomNumber,
-        description: patient.description
+        birthYear: patient.birthYear !== null ? patient.birthYear.split('-').join('.') : null
     }));
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -142,29 +142,38 @@ export const PatientsTable = ({patients}) => {
 
     const patientColumns = [
         {
+            title: "Идентификационный номер",
+            dataIndex: "id",
+            key: "id",
+            width: "10%",
+            ...getColumnSearchProps("id", "Идентификационный номер"),
+            sorter: (a, b) => a.id > b.id ? 1 : -1,
+            sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
+        },
+        {
             title: "ФИО",
-            dataIndex: "name",
-            key: "name",
-            ...getColumnSearchProps("name", "ФИО"),
-            sorter: (a, b) => compareStrings(a?.name, b?.name),
-            sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
+            dataIndex: "fullName",
+            key: "fullName",
+            ...getColumnSearchProps("fullName", "ФИО"),
+            sorter: (a, b) => compareStrings(a?.fullName, b?.fullName),
+            sortOrder: sortedInfo.columnKey === "fullName" ? sortedInfo.order : null,
         },
         {
             title: "Дата рождения",
-            key: "birthDay",
-            dataIndex: "birthDay",
-            ...getColumnSearchProps("birthDay", "Дата рождения"),
-            sorter: (a, b) => a?.birthDay.localeCompare(b?.birthDay),
-            sortOrder: sortedInfo.columnKey === "birthDay" ? sortedInfo.order : null,
+            key: "birthYear",
+            dataIndex: "birthYear",
+            ...getColumnSearchProps("birthYear", "Дата рождения"),
+            sorter: (a, b) => compareDates(a.birthYear, b.birthYear),
+            sortOrder: sortedInfo.columnKey === "birthYear" ? sortedInfo.order : null,
         },
         {
             title: "Палата",
-            dataIndex: "room",
-            key: "room",
-            ...getColumnSearchProps("room", "Палата"),
-            sorter: (a, b) => compareStrings(a?.room, b?.room),
+            dataIndex: "roomNumber",
+            key: "roomNumber",
+            ...getColumnSearchProps("roomNumber", "Палата"),
+            sorter: (a, b) => compareNumbers(a.roomNumber, b.roomNumber),
             sortOrder:
-                sortedInfo.columnKey === "room" ? sortedInfo.order : null,
+                sortedInfo.columnKey === "roomNumber" ? sortedInfo.order : null,
         },
         {
             title: "Описание",
@@ -184,7 +193,7 @@ export const PatientsTable = ({patients}) => {
                             color: "white",
                         }}
                         onClick={() => {
-                            dischargePatientById(idd);
+                            dischargePatientById(idd, patientEntities, setPatients);
                         }}
                     >
                         Выписать

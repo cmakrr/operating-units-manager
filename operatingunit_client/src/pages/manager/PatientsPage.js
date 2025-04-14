@@ -3,6 +3,7 @@ import {ManagerSider} from "../../components/sider/Siders";
 import React, {useEffect, useState} from "react";
 import {managerMenuItems} from "../../const/constants";
 import {getPatients} from "../../request/PatientRequests";
+import PatientsTable from "../../components/table/PatientsTable";
 
 function PatientsPage() {
     const [patients, setPatients] = useState([]);
@@ -29,7 +30,7 @@ function PatientsPage() {
                 >
                     <p/>
                     <div>
-                        <PatientsPage patients={patients}/>
+                        <PatientsTable patientEntities={patients} setPatients={setPatients}/>
                     </div>
                     <p/>
 
