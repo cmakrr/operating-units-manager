@@ -28,6 +28,8 @@ public interface MedicalWorkerService {
     Map<MedicalWorkerOperationRole, String> createMedicalWorkersRoleMap(String operatorName, String assistantName,
                                                                         String transfusiologistName);
 
+    List<MedicalWorker> findAllEmployedWorkers();
+
     MedicalWorker findById(Long id);
 
     void save(MedicalWorker medicalWorker);

@@ -14,9 +14,9 @@ import java.util.List;
 public class WorkerController {
     private final MedicalWorkerService workerService;
 
-    @GetMapping("/all")
+    @GetMapping("/all/employed")
     public List<MedicalWorker> findAll() {
-        return workerService.findAll();
+        return workerService.findAllEmployedWorkers();
     }
 
     @GetMapping("/status/{status}")

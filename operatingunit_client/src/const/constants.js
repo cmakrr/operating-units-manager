@@ -119,7 +119,8 @@ export const managerMenuItems = {
   monitoring: { label: `Мониторинг`, key: `Monitoring` },
   operatingRooms: { label: "Операционные", key: "OperatingRooms" },
   statistics: { label: `Статистика`, key: `Statistics` },
-  patients: { label: `Пациенты`, key: `Patients`}
+  patients: { label: `Пациенты`, key: `Patients`},
+  workers: {label: `Работники`, key: `Workers`}
 };
 
 export const menuItemsKeyRoutes = {
@@ -131,5 +132,6 @@ export const menuItemsKeyRoutes = {
   [managerMenuItems.operatingRooms.key]: clientApi.manager.operatingRooms,
   [managerMenuItems.monitoring.key]: clientApi.manager.monitoring,
   [managerMenuItems.users.main.key]: (role) => clientApi.manager.users(role),
-  [managerMenuItems.patients.key]: clientApi.manager.patients
+  [managerMenuItems.patients.key]: clientApi.manager.patients,
+  [managerMenuItems.workers.key]: clientApi.manager.workers,
 };

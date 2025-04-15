@@ -22,6 +22,8 @@ public interface MedicalWorkerRepository extends JpaRepository<MedicalWorker, Lo
 
     Optional<MedicalWorker> findByFullName(String name);
 
+    List<MedicalWorker> findByWorkerStatusNot(WorkerStatus workerStatus);
+
     @Query("SELECT mw FROM MedicalWorker mw WHERE NOT EXISTS (SELECT 1 FROM OperationPlan op " +
             "WHERE (op.operator.id = mw.id OR op.assistant.id = mw.id OR op.transfusiologist.id = mw.id)  " +
             "AND (op.startTime < :end AND op.endTime > :start))" )
