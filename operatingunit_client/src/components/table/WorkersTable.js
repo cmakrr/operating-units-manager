@@ -1,10 +1,9 @@
 import {Button, Input, Space, Table} from "antd";
-import {blueColor, patientsTableLocale} from "../../const/constants";
+import {blueColor, workersTableLocale} from "../../const/constants";
 import React, {useRef, useState} from "react";
 import {SearchOutlined,} from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import {compareNullableStrings, compareStrings} from "../../functions/Utils";
-import {compareNumbers} from "../../utils/compareUtils";
 import {WorkerStatus} from "../../functions/MedicalWorker";
 
 export const WorkersTable = ({workerEntities, openModal}) => {
@@ -158,7 +157,7 @@ export const WorkersTable = ({workerEntities, openModal}) => {
             dataIndex: "status",
             key: "status",
             ...getColumnSearchProps("status", "статус"),
-            sorter: (a, b) => compareNumbers(a.workerStatus, b.workerStatus),
+            sorter: (a, b) => compareNullableStrings(a.workerStatus, b.workerStatus),
             sortOrder:
                 sortedInfo.columnKey === "status" ? sortedInfo.order : null,
         },
@@ -187,7 +186,7 @@ export const WorkersTable = ({workerEntities, openModal}) => {
 
     return (
         <Table
-            locale={patientsTableLocale}
+            locale={workersTableLocale}
             columns={workerColumns}
             dataSource={workers}
             onChange={handleChange}

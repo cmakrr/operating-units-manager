@@ -7,7 +7,8 @@ const FORBIDDEN_MESSAGE =
 
 export async function getWorkers() {
     try {
-        return await sendGetRequest(serverApi.worker.getAll)?.data;
+        let response = await sendGetRequest(serverApi.worker.getAll);
+        return response?.data;
     } catch (error) {
         processResponseError(error, FORBIDDEN_MESSAGE);
         return null;

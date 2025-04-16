@@ -1,58 +1,65 @@
 import MainHeader from "../../components/common/MainHeader";
 import {ManagerSider} from "../../components/sider/Siders";
 import React, {useEffect, useState} from "react";
-import {ipPattern, managerMenuItems} from "../../const/constants";
-import {getPatients} from "../../request/PatientRequests";
+import {managerMenuItems} from "../../const/constants";
 import WorkersTable from "../../components/table/WorkersTable";
 import {Button, Form, Input, message, Modal, Select} from "antd";
-import {createOperatingRoom} from "../../request/OperatingRoomRequests";
-import {saveWorker, updateWorker} from "../../request/WorkerRequests";
+import {getWorkers, saveWorker, updateWorker} from "../../request/WorkerRequests";
 import {WorkerStatus} from "../../functions/MedicalWorker";
-
-async function fetchData(setWorkers) {
-    try {
-        const workersData = await getPatients();
-        setWorkers(workersData);
-    } catch (error) {
-        console.error("Произошла ошибка при получении информации об пациентах:", error);
-    }
-}
 
 function WorkersPage() {
     const [workers, setWorkers] = useState([]);
     const [modalSave, setModalSave] = useState(false);
     const [modalUpdate, setModalUpdate] = useState(false);
-    const [workerToUpdate, setWorkerToUpdate] = workerToUpdate;
+    const [workerToUpdate, setWorkerToUpdate] = useState({});
+    const [form] = Form.useForm();
+
+    async function fetchData() {
+        try {
+            const workersData = await getWorkers();
+            setWorkers(workersData);
+        } catch (error) {
+            console.error("Произошла ошибка при получении информации о работниках:", error);
+        }
+    }
 
     async function openUpdateWorker(id){
-        setWorkerToUpdate(workers.find(x=>x.id === id));
+        let worker = workers.find(x=>x.id === id);
+        setWorkerToUpdate(worker);
         setModalUpdate(true);
+        form.setFieldsValue(worker);
     }
 
     async function saveNewWorker(worker){
         await saveWorker(worker);
         let newWorkersArr = [...workers, worker];
         setWorkers(newWorkersArr);
+        await fetchData();
         message.success(<span>{`Работник успешно добавлен!`}</span>);
     }
 
-    async function updateWorkerFields(worker){
-        await updateWorker(worker);
-        let newWorkersArr = workers.map(x => x.id === workerToUpdate.id ? worker : x);
+    async function updateWorkerFields(values){
+        let updatedWorker = {...workerToUpdate};
+        updatedWorker.workerStatus = values.workerStatus;
+        updatedWorker.fullName = values.fullName;
+        updatedWorker.position = values.position;
+        await updateWorker(updatedWorker);
+        let newWorkersArr = workers.map(x => x.id === workerToUpdate.id ? updatedWorker : x);
         setWorkers(newWorkersArr);
         message.success(<span>{`Работник успешно обновлен!`}</span>);
     }
 
     async function removeWorker(){
-        workerToUpdate.workerStatus = 2;
+        workerToUpdate.workerStatus = "DELETED";
         await updateWorker(workerToUpdate);
         let newWorkersArr = workers.filter(x => x.id !== workerToUpdate.id);
         setWorkers(newWorkersArr);
+        setModalUpdate(false);
         message.success(<span>{`Работник успешно удален!`}</span>);
     }
 
-    useEffect(async () => {
-        await fetchData();
+    useEffect(() => {
+        fetchData();
     }, []);
 
     return (
@@ -64,7 +71,7 @@ function WorkersPage() {
                 >
                     <p/>
                     <div>
-                        <WorkersTable patientEntities={workers} openModal={openUpdateWorker}/>
+                        <WorkersTable workerEntities={workers} openModal={openUpdateWorker}/>
                     </div>
                     <p/>
                     <Button
@@ -78,10 +85,7 @@ function WorkersPage() {
                         title="Добавление работника"
                         centered
                         open={modalSave}
-                        initialValues={{
-                            workerStatus: 0
-                        }}
-                        onCancel={() => setModal2Open(false)}
+                        onCancel={() => setModalSave(false)}
                         footer={null}
                     >
                         <Form
@@ -92,6 +96,7 @@ function WorkersPage() {
                             wrapperCol={{
                                 span: 20,
                             }}
+                            initialValues={{ workerStatus: "WORKING" }}
                             onFinish={(values) => saveNewWorker(values)}
                             autoComplete="off"
                         >
@@ -121,23 +126,11 @@ function WorkersPage() {
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item
-                                label="Должность"
-                                name="position"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Пожалуйста, введите должность работника!",
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
 
-                            <Form.Item name="workerStatus" label="Статус работника">
+                            <Form.Item name="workerStatus" label="Статус">
                                 <Select>
                                     {Object.entries(WorkerStatus).map(([key, value]) => (
-                                        <Select.Option key={key} value={Number(key)}>
+                                        <Select.Option key={key} value={key}>
                                             {value}
                                         </Select.Option>
                                     ))}
@@ -161,17 +154,15 @@ function WorkersPage() {
                         </Form>
                     </Modal>
                     <Modal
-                        title="Добавление работника"
+                        title="Обновление работника"
                         centered
                         open={modalUpdate}
-                        initialValues={{
-                            ...workerToUpdate
-                        }}
                         onCancel={() => setModalUpdate(false)}
                         footer={null}
                     >
                         <Form
                             name="basicUpdate"
+                            form={form}
                             labelCol={{
                                 span: 5,
                             }}
@@ -197,33 +188,14 @@ function WorkersPage() {
                             <Form.Item
                                 label="Должность"
                                 name="position"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Пожалуйста, введите должность работника!",
-                                    },
-                                ]}
                             >
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item
-                                label="Должность"
-                                name="position"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Пожалуйста, введите должность работника!",
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-                            <Form.Item name="workerStatus" label="Статус работника">
+                            <Form.Item name="workerStatus" label="Статус">
                                 <Select>
                                     {Object.entries(WorkerStatus).map(([key, value]) => (
-                                        <Select.Option key={key} value={Number(key)}>
+                                        <Select.Option key={key} value={key}>
                                             {value}
                                         </Select.Option>
                                     ))}
@@ -247,7 +219,7 @@ function WorkersPage() {
                                     type="primary"
                                     onClick={() => removeWorker()}
                                     danger
-                                    style={{ width: "100%" }}
+                                    style={{ marginTop:"10px", width: "100%" }}
                                 >
                                     Удалить
                                 </Button>

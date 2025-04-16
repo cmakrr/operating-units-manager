@@ -112,7 +112,7 @@ public class DefaultMedicalWorkerService implements MedicalWorkerService {
 
     @Override
     public List<MedicalWorker> findAllEmployedWorkers() {
-        return medicalWorkerRepository.findByWorkerStatusNot(WorkerStatus.NOT_EMPLOYED);
+        return medicalWorkerRepository.findByWorkerStatusNotAndFullNameIsNotNull(WorkerStatus.DELETED);
     }
 
     @Override

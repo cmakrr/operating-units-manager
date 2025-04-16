@@ -61,6 +61,15 @@ export const patientsTableLocale = {
   ),
 };
 
+export const workersTableLocale = {
+  ...tableLocale,
+  emptyText: (
+      <Empty
+          description={`Пациенты отсутствуют.`}
+      />
+  ),
+};
+
 export const tableOperationsLocale = {
   ...tableLocale,
   emptyText: (

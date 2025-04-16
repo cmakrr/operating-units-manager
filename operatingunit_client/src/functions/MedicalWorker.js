@@ -16,7 +16,7 @@ export function getMedicalWorkerFactInfo(planWorker, factWorker) {
 }
 
 export const WorkerStatus = {
-  0: "На работе",
-  1: "В отпуске",
-  2: "На больничном"
+  "WORKING": "На работе",
+  "VACATIONING": "В отпуске",
+  "SICK": "На больничном"
 }

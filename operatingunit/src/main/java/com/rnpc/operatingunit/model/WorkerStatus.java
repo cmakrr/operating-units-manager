@@ -9,7 +9,7 @@ public enum WorkerStatus {
     WORKING("working"),
     VACATIONING("vacationing"),
     SICK("sick"),
-    NOT_EMPLOYED("not_employed");
+    DELETED("deleted");
 
     private final String status;
 }

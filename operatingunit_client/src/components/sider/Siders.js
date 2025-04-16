@@ -123,6 +123,11 @@ export const ManagerSider = ({ children, breadcrumb, header, defaultKey }) => {
     getItem(managerMenuItems.patients.label,
         managerMenuItems.patients.key,
         <MedicineBoxOutlined/>),
+    (userRole === managerMenuItems.users.general_manager.key ||
+        userRole === managerMenuItems.users.admin.key) &&
+    getItem(managerMenuItems.workers.label,
+        managerMenuItems.workers.key,
+        <TeamOutlined />),
     getItem(
       managerMenuItems.statistics.label,
       managerMenuItems.statistics.key,

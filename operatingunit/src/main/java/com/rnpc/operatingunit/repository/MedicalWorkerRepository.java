@@ -2,10 +2,6 @@ package com.rnpc.operatingunit.repository;
 
 import com.rnpc.operatingunit.model.MedicalWorker;
 import com.rnpc.operatingunit.model.WorkerStatus;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,16 +12,16 @@ import java.util.Optional;
 public interface MedicalWorkerRepository extends JpaRepository<MedicalWorker, Long> {
     Optional<MedicalWorker> findByFullNameAndRole(String fullName, String role);
 
-    List<MedicalWorker> findByWorkerStatus(WorkerStatus status);
-
     List<MedicalWorker> findByFullNameContaining(String name);
 
     Optional<MedicalWorker> findByFullName(String name);
 
-    List<MedicalWorker> findByWorkerStatusNot(WorkerStatus workerStatus);
+    List<MedicalWorker> findByWorkerStatusNotAndFullNameIsNotNull(WorkerStatus workerStatus);
 
     @Query("SELECT mw FROM MedicalWorker mw WHERE NOT EXISTS (SELECT 1 FROM OperationPlan op " +
             "WHERE (op.operator.id = mw.id OR op.assistant.id = mw.id OR op.transfusiologist.id = mw.id)  " +
             "AND (op.startTime < :end AND op.endTime > :start))" )
     List<MedicalWorker> findFreeWorkers(LocalDateTime start, LocalDateTime end);
+
+    List<MedicalWorker> findByWorkerStatus(WorkerStatus status);
 }

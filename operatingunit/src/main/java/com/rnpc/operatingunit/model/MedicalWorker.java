@@ -18,7 +18,7 @@ public class MedicalWorker extends Person {
     @Column(name = "mw_role", unique = true)
     private String role;
     private String position;
-    private WorkerStatus workerStatus;
+    private WorkerStatus workerStatus = WorkerStatus.WORKING;
 
     @Override
     public boolean equals(Object obj) {
