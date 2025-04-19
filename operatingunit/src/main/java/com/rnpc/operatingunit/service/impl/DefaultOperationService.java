@@ -144,17 +144,6 @@ public class DefaultOperationService implements OperationService {
         fact.setEndTime(operationRequest.getEndTime());
         fact.setStartTime(operationRequest.getStartTime());
         fact.setInstruments(operationRequest.getInstruments());
-        Set<OperationStepStatus> steps = operationRequest.getSteps().stream()
-                .map(x -> {
-                    OperationStepStatus status = new OperationStepStatus();
-                    status.setComment(x.getComment());
-                    status.setStatus(OperationStepStatusName.NOT_STARTED);
-                    status.setStartTime(x.getStartTime());
-                    status.setEndTime(x.getEndTime());
-                    return status;
-                })
-                .collect(Collectors.toSet());
-        fact.setSteps(steps);
 
         operation.setOperationName(operationRequest.getOperationName());
         operation.setDate(operationRequest.getDate());

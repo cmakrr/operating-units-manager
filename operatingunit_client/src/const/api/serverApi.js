@@ -53,7 +53,9 @@ export const serverApi = {
   },
   patient: {
     getAllInHospital: `api/v1/patient/all`,
-    dispatchById: (id) =>  `api/v1/patient/dispatch/${id}`
+    dispatchById: (id) =>  `api/v1/patient/dispatch/${id}`,
+    save: `api/v1/patient`,
+    update: `api/v1/patient`
   },
   worker: {
     getAll : `api/v1/worker/all/employed`,

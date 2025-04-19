@@ -16,7 +16,6 @@ public class OperationRequest {
     private Long operatorId;
     private Long assistantId;
     private Long transfusiologistId;
-    private Set<OperationStepInfo> steps;
     private Long patientId;
     private Long operatingRoomId;
 }

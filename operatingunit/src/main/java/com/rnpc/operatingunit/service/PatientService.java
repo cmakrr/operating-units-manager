@@ -13,6 +13,8 @@ public interface PatientService {
 
     List<Patient> findAllPatientsInHospital();
 
+    List<Patient> findAll();
+
     List<Patient> findByFullNameContaining(String name);
 
     void dispatchPatient(Long id);

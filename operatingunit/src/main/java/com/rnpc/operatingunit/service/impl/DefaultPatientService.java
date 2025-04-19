@@ -52,6 +52,10 @@ public class DefaultPatientService implements PatientService {
         return patientRepository.findByStatus(PatientStatus.IN_HOSPITAL);
     }
 
+    @Override
+    public List<Patient> findAll() {
+        return patientRepository.findAll();
+    }
 
 
     @Override

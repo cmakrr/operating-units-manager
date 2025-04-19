@@ -1,26 +1,13 @@
-import {Button, Input, message, Space, Table} from "antd";
+import {Button, Input, Space, Table} from "antd";
 import {blueColor, patientsTableLocale} from "../../const/constants";
 import React, {useRef, useState} from "react";
 import {SearchOutlined,} from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import {compareStrings} from "../../functions/Utils";
-import {dischargePatient} from "../../request/PatientRequests";
 import {compareDates, compareNumbers} from "../../utils/compareUtils";
+import dayjs from "dayjs";
 
-async function dischargePatientById(id, patients, setPatients) {
-    dischargePatient(id);
-
-    message.success(<span>{`Пациент был выписан успешно!`}</span>);
-
-    removePatient(id, patients, setPatients)
-}
-
-function removePatient(id, patients, setPatients){
-    const newPatients = patients.filter(x=>x.id !== id);
-    setPatients(newPatients);
-}
-
-export const PatientsTable = ({patientEntities, setPatients}) => {
+export const PatientsTable = ({patientEntities, openModal}) => {
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
     const [sortedInfo, setSortedInfo] = useState({});
@@ -29,7 +16,7 @@ export const PatientsTable = ({patientEntities, setPatients}) => {
     const patients = patientEntities?.map((patient) => ({
         ...patient,
         idd: patient.id,
-        birthYear: patient.birthYear !== null ? patient.birthYear.split('-').join('.') : null
+        birthDate: patient.birthYear !== null ? patient.birthYear.split('-').join('.') : null
     }));
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -160,11 +147,11 @@ export const PatientsTable = ({patientEntities, setPatients}) => {
         },
         {
             title: "Дата рождения",
-            key: "birthYear",
-            dataIndex: "birthYear",
-            ...getColumnSearchProps("birthYear", "Дата рождения"),
-            sorter: (a, b) => compareDates(a.birthYear, b.birthYear),
-            sortOrder: sortedInfo.columnKey === "birthYear" ? sortedInfo.order : null,
+            key: "birthDate",
+            dataIndex: "birthDate",
+            ...getColumnSearchProps("birthDate", "Дата рождения"),
+            sorter: (a, b) => compareDates(a.birthDate, b.birthDate),
+            sortOrder: sortedInfo.columnKey === "birthDate" ? sortedInfo.order : null,
         },
         {
             title: "Палата",
@@ -193,10 +180,10 @@ export const PatientsTable = ({patientEntities, setPatients}) => {
                             color: "white",
                         }}
                         onClick={() => {
-                            dischargePatientById(idd, patientEntities, setPatients);
+                            openModal(idd);
                         }}
                     >
-                        Выписать
+                        Редактировать
                     </Button>
                 </>
             )
