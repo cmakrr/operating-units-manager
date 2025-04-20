@@ -49,6 +49,11 @@ public class DefaultOperatingRoomService implements OperatingRoomService {
         return operatingRoom;
     }
 
+    @Override
+    public OperatingRoom findById(Long id) {
+        return operatingRoomRepository.findById(id).get();
+    }
+
     public List<OperatingRoom> getOperatingRooms() {
         return operatingRoomRepository.findAll();
     }

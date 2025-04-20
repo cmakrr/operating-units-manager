@@ -33,6 +33,7 @@ export async function updatePatient(patient) {
 
 export async function savePatient(patient) {
     try {
+        console.log(patient);
         await sendPostRequest(serverApi.patient.save, patient);
     } catch (error) {
         processResponseError(error, FORBIDDEN_MESSAGE);

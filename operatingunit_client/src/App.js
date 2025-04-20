@@ -20,6 +20,7 @@ import UsersByRolePage from "./pages/manager/UsersByRolePage";
 import {getAuthHeader, getToken} from "./functions/Token";
 import PatientsPage from "./pages/manager/PatientsPage";
 import WorkersPage from "./pages/manager/WorkersPage";
+import CreateOperationPage from "./pages/manager/CreateOperationPage";
 
 axios.defaults.baseURL = `http://localhost:80`;
 
@@ -136,6 +137,10 @@ function App() {
                 <Route
                     path={clientApi.manager.workers}
                     element={<WorkersPage />}
+                />
+                <Route
+                    path={clientApi.manager.createPlan}
+                    element={<CreateOperationPage />}
                 />
               </Routes>
             </Router>

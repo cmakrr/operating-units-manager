@@ -111,6 +111,7 @@ export const managerMenuItems = {
     main: { label: "План", key: "Plan" },
     load: { label: "Загрузка", key: "PlanLoad" },
     view: { label: "Просмотр", key: "PlanView" },
+    create: { label : "Создать", key: "CreatePlan" }
   },
   users: {
     main: {
@@ -134,6 +135,7 @@ export const managerMenuItems = {
 
 export const menuItemsKeyRoutes = {
   [managerMenuItems.plan.load.key]: clientApi.manager.loadPlan,
+  [managerMenuItems.plan.create.key]: clientApi.manager.createPlan,
   [managerMenuItems.plan.view.key]: (date) =>
     clientApi.manager.planForDate(date),
   [managerMenuItems.statistics.key]: (startDate, endDate) =>

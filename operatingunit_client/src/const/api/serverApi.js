@@ -34,6 +34,8 @@ export const serverApi = {
   },
   operationPlan: {
     load: `/api/v1/operationPlan/load`,
+    info: `/api/v1/operationPlan/info`,
+    create:`/api/v1/operationPlan/create`
   },
   operations: {
     get: (id) => `/api/v1/operations/${id}`,

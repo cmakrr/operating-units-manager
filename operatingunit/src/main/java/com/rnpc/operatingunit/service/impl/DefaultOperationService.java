@@ -1,8 +1,10 @@
 package com.rnpc.operatingunit.service.impl;
 
 import com.rnpc.operatingunit.dto.request.operation.OperationRequest;
+import com.rnpc.operatingunit.dto.response.operation.MedicalWorkerInfoResponse;
+import com.rnpc.operatingunit.dto.response.operation.OperatingRoomInfoResponse;
 import com.rnpc.operatingunit.dto.response.operation.OperationAvailableInfoResponse;
-import com.rnpc.operatingunit.enums.OperationStepStatusName;
+import com.rnpc.operatingunit.dto.response.operation.PatientInfoResponse;
 import com.rnpc.operatingunit.enums.PatientStatus;
 import com.rnpc.operatingunit.exception.operation.OperationNotFoundException;
 import com.rnpc.operatingunit.exception.plan.OperationPlanCantBeModifiedException;
@@ -16,6 +18,7 @@ import io.hypersistence.utils.hibernate.type.basic.Inet;
 import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -37,6 +40,7 @@ public class DefaultOperationService implements OperationService {
     private final MedicalWorkerService medicalWorkerService;
     private final PatientService patientService;
     private final OperatingRoomService operatingRoomService;
+    private final ModelMapper mapper;
 
     public Operation getById(Long id) {
         Objects.requireNonNull(id);
@@ -129,6 +133,8 @@ public class DefaultOperationService implements OperationService {
         MedicalWorker transfusiologist = medicalWorkerService.findById(operationRequest.getTransfusiologistId());
         MedicalWorker assistant = medicalWorkerService.findById(operationRequest.getAssistantId());
         MedicalWorker operator = medicalWorkerService.findById(operationRequest.getOperatorId());
+        Patient patient = patientService.getPatient(operationRequest.getPatientId());
+        OperatingRoom room = operatingRoomService.findById(operationRequest.getOperatingRoomId());
 
         OperationPlan plan = new OperationPlan();
         plan.setTransfusiologist(transfusiologist);
@@ -136,29 +142,34 @@ public class DefaultOperationService implements OperationService {
         plan.setAssistant(assistant);
         plan.setEndTime(operationRequest.getEndTime());
         plan.setStartTime(operationRequest.getStartTime());
+        operation.setOperationPlan(plan);
 
-        OperationFact fact = new OperationFact();
-        fact.setTransfusiologist(transfusiologist);
-        fact.setOperator(operator);
-        fact.setAssistant(assistant);
-        fact.setEndTime(operationRequest.getEndTime());
-        fact.setStartTime(operationRequest.getStartTime());
-        fact.setInstruments(operationRequest.getInstruments());
+        operation.setPatient(patient);
+        operation.setOperatingRoom(room);
 
         operation.setOperationName(operationRequest.getOperationName());
         operation.setDate(operationRequest.getDate());
         operation.setPatient(patientService.getPatient(operationRequest.getPatientId()));
+        operation.setInstruments(operation.getInstruments());
         updatePatientStatus(operation);
         operationRepository.save(operation);
     }
 
     @Override
     public OperationAvailableInfoResponse getAvailableInfo(LocalDateTime start, LocalDateTime end) {
-        List<MedicalWorker> freeWorkers = medicalWorkerService.findAvailableWorkers(start, end);
-        List<OperatingRoom> freeRooms = operatingRoomService.findFreeRooms(start, end);
+        List<MedicalWorkerInfoResponse> freeWorkers = medicalWorkerService.findAvailableWorkers(start, end)
+                .stream().map(x -> mapper.map(x, MedicalWorkerInfoResponse.class))
+                .toList();
+        List<OperatingRoomInfoResponse> freeRooms = operatingRoomService.findFreeRooms(start, end)
+                .stream().map(x -> mapper.map(x, OperatingRoomInfoResponse.class))
+                .toList();
+        List<PatientInfoResponse> freePatients = patientService.findAvailablePatients(start, end)
+                .stream().map(x -> mapper.map(x, PatientInfoResponse.class))
+                .toList();
         OperationAvailableInfoResponse response = new OperationAvailableInfoResponse();
         response.setAvailableWorkers(freeWorkers);
-        response.setFreeOperatingRooms(freeRooms);
+        response.setAvailableOperatingRooms(freeRooms);
+        response.setAvailablePatients(freePatients);
         return response;
     }
 

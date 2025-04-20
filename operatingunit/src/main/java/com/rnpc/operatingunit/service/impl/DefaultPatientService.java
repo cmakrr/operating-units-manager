@@ -10,6 +10,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -50,6 +51,11 @@ public class DefaultPatientService implements PatientService {
     @Override
     public List<Patient> findAllPatientsInHospital() {
         return patientRepository.findByStatus(PatientStatus.IN_HOSPITAL);
+    }
+
+    @Override
+    public List<Patient> findAvailablePatients(LocalDateTime start, LocalDateTime end) {
+        return patientRepository.findAvailablePatients(start, end);
     }
 
     @Override

@@ -4,11 +4,10 @@ import React, {useEffect, useState} from "react";
 import {managerMenuItems} from "../../const/constants";
 import {dischargePatient, getPatients, savePatient, updatePatient} from "../../request/PatientRequests";
 import PatientsTable from "../../components/table/PatientsTable";
-import {Button, DatePicker, Form, Input, InputNumber, message, Modal, Select} from "antd";
-import {WorkerStatus} from "../../functions/MedicalWorker";
-import {saveWorker, updateWorker} from "../../request/WorkerRequests";
+import {Button, DatePicker, Form, Input, InputNumber, message, Modal} from "antd";
 import dayjs from "dayjs";
 
+dayjs.locale("ru");
 function PatientsPage() {
     const [patients, setPatients] = useState([]);
     const [modalSave, setModalSave] = useState(false);
@@ -40,10 +39,11 @@ function PatientsPage() {
     }
 
     async function saveNewPatient(patient){
+        patient.birthYear = dayjs(patient.birthYear).format('YYYY-MM-DD');
         patient.status = "IN_HOSPITAL";
         await savePatient(patient);
         await fetchData();
-        message.success(<span>{`Работник успешно добавлен!`}</span>);
+        message.success(<span>{`Пациент успешно добавлен!`}</span>);
     }
 
     async function updatePatientFields(values){
@@ -51,7 +51,7 @@ function PatientsPage() {
         updatedPatient.fullName = values.fullName;
         updatedPatient.description = values.description;
         updatedPatient.roomNumber = values.roomNumber;
-        updatedPatient.birthYear = values.birthDateToUpdate;
+        updatedPatient.birthYear = dayjs(values.birthDateToUpdate).format('YYYY-MM-DD');
         await updatePatient(updatedPatient);
         updatedPatient.birthYear = values.birthDateToUpdate.format('YYYY-MM-DD');;
         let newPatientsArr = patients.map(x => x.id === patientToUpdate.id ? updatedPatient : x);

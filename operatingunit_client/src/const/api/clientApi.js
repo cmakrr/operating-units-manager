@@ -18,6 +18,7 @@ export const clientApi = {
     plan: `/management/plan`,
     planForDate: (date) => `/management/plan?date=${date}`,
     loadPlan: `/management/plan/load`,
+    createPlan: `/management/plan/create`,
     operatingRooms: `/management/operatingRooms`,
     operation: (id) => `/management/operation/${id}`,
     statistics: `/management/statistics`,

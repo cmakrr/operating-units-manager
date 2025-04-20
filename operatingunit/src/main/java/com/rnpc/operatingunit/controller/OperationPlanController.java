@@ -24,7 +24,7 @@ public class OperationPlanController {
     private final OperationPlanParser parser;
     private final ModelMapper modelMapper;
 
-    @GetMapping("/info")
+    @PostMapping("/info")
     public OperationAvailableInfoResponse getAvailableInfo(@RequestBody DateTimeRangeRequest dateTimeRangeRequest){
         return operationService.getAvailableInfo(dateTimeRangeRequest.getStart(), dateTimeRangeRequest.getEnd());
     }

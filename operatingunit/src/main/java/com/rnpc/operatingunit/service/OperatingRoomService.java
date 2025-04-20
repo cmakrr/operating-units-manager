@@ -9,6 +9,8 @@ import java.util.List;
 public interface OperatingRoomService {
     OperatingRoom saveOrGetOperatingRoom(OperatingRoom operatingRoom);
 
+    OperatingRoom findById(Long id);
+
     List<OperatingRoom> getOperatingRooms();
 
     String getOperatingRoomNameByIp(String ip);

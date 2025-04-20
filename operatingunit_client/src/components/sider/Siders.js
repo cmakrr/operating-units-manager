@@ -5,7 +5,7 @@ import {
   FileAddOutlined,
   FileOutlined,
   FileSearchOutlined, MedicineBoxOutlined,
-  PieChartOutlined,
+  PieChartOutlined, PlusCircleOutlined,
   RobotOutlined,
   TeamOutlined,
   UserOutlined,
@@ -75,6 +75,11 @@ export const ManagerSider = ({ children, breadcrumb, header, defaultKey }) => {
           managerMenuItems.plan.view.key,
           <FileSearchOutlined />,
         ),
+        getItem(
+            managerMenuItems.plan.create.label,
+            managerMenuItems.plan.create.key,
+            <PlusCircleOutlined />,
+        )
       ],
     ),
     (userRole === managerMenuItems.users.general_manager.key ||

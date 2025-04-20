@@ -2,6 +2,7 @@ package com.rnpc.operatingunit.service;
 
 import com.rnpc.operatingunit.model.Patient;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PatientService {
@@ -12,6 +13,8 @@ public interface PatientService {
     Patient getPatient(Long id);
 
     List<Patient> findAllPatientsInHospital();
+
+    List<Patient> findAvailablePatients(LocalDateTime start, LocalDateTime end);
 
     List<Patient> findAll();
 
