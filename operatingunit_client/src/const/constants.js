@@ -130,7 +130,13 @@ export const managerMenuItems = {
   operatingRooms: { label: "Операционные", key: "OperatingRooms" },
   statistics: { label: `Статистика`, key: `Statistics` },
   patients: { label: `Пациенты`, key: `Patients`},
-  workers: {label: `Работники`, key: `Workers`}
+  workers: {label: `Работники`, key: `Workers`},
+  analysis: {
+    main: { label: "Анализ", key: "Analysis" },
+    worker: { label: "Работники", key: "WorkersAnalysis" },
+    room: { label: "Палаты", key: "RoomsAnalysis"},
+    operations: {label: "Операции", key: "OperationsAnalysis"}
+  }
 };
 
 export const menuItemsKeyRoutes = {

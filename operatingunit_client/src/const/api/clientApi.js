@@ -27,6 +27,9 @@ export const clientApi = {
     monitoring: `/management/monitoring`,
     users: (role) => `/management/users/${role}`,
     patients: `/management/patients`,
-    workers: `/management/workers`
+    workers: `/management/workers`,
+    operatingRoomsAnalysis: `/management/analysis/rooms`,
+    workersAnalysis: `/management/analysis/workers`,
+    operationsAnalysis: `/management/analysis/operations`
   },
 };

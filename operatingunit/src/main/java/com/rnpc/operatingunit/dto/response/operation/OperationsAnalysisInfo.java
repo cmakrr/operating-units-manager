@@ -14,6 +14,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Data
 public class OperationsAnalysisInfo {
+    private OperationsOverallAnalysis overallAnalysis;
     private Map<LocalDate, List<OperationInfo>> operations;
     private LocalDate analysisStart;
     private LocalDate analysisEnd;

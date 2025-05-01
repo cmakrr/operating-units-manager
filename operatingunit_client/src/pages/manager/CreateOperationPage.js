@@ -33,7 +33,6 @@ function CreateOperationPage() {
     }
 
     async function submitTimeForm(values){
-        console.log(dateValue);
         const date = dayjs(values.date).format('YYYY-MM-DD');
         const formattedStartTime = dayjs(values.startTime).format('HH:mm:ss');
         const formattedEndTime =dayjs(values.endTime).format('HH:mm:ss');

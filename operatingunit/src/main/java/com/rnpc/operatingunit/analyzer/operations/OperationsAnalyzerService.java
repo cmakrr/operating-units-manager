@@ -61,6 +61,8 @@ public class OperationsAnalyzerService {
 
     public OperationsAnalysisInfo createOperationsAnalysisInfo(List<Operation> operations, LocalDate start, LocalDate end) {
         OperationsAnalysisInfo result = new OperationsAnalysisInfo();
+        OperationsOverallAnalysis overallAnalysis = createOperationsOverallAnalysis(operations, start, end);
+        result.setOverallAnalysis(overallAnalysis);
         Map<LocalDate, List<OperationInfo>> operationsInfoByDate = new HashMap<>();
 
         int daysCount = (int) (start.toEpochDay() - end.toEpochDay());

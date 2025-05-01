@@ -63,5 +63,10 @@ export const serverApi = {
     getAll : `api/v1/worker/all/employed`,
     update : `api/v1/worker/update`,
     save : `api/v1/worker/save`
+  },
+  analysis: {
+    workers: (id) => `api/v1/analysis/worker/${id}`,
+    rooms: (name) => `api/v1/analysis/room/${name}`,
+    operations: `api/v1/analysis`
   }
 };
