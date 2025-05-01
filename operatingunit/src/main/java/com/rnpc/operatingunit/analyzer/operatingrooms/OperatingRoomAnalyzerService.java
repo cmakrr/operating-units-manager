@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,8 +36,10 @@ public class OperatingRoomAnalyzerService {
     private List<Operation> findRoomOperations(String room, LocalDate start, LocalDate end){
         Optional<OperatingRoom> operatingRoom = operatingRoomRepository.findByNameIgnoreCase(room);
         if(operatingRoom.isEmpty()){
-            return null;
+            return Collections.emptyList();
         }
-        return operationRepository.findBetweenDatesInOperatingRoom(start, end, operatingRoom.get().getId());
+        LocalDateTime startTime = start.atStartOfDay();
+        LocalDateTime endTime = start.atTime(23,59);
+        return operationRepository.findBetweenDatesInOperatingRoom(startTime, endTime, operatingRoom.get().getId());
     }
 }

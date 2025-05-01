@@ -7,6 +7,7 @@ import MainHeader from "../../components/common/MainHeader";
 import {ManagerSider} from "../../components/sider/Siders";
 import AnalysisDatePicker from "./AnalysisDatePicker";
 import {getRoomsAnalysis} from "../../request/AnalysisRequests";
+import {createDateRange, validateDates} from "./CommonMethods";
 
 function RoomsAnalysis() {
     const [startDate, setStartDate] = useState(dayjs().add(-1, "d"));
@@ -15,10 +16,10 @@ function RoomsAnalysis() {
     const [isInfoFetched, setIsInfoFetched] = useState(false);
 
     async function submitForm(values) {
-        const dateRange = {
-            "startDate": startDate,
-            "endDate": endDate
-        };
+        if(!validateDates(startDate, endDate)){
+            return;
+        }
+        const dateRange = createDateRange(startDate, endDate);
 
         const result = await getRoomsAnalysis(values.operationRoom, dateRange);
 
@@ -34,9 +35,9 @@ function RoomsAnalysis() {
             <div style={{overflowX: "auto", width: "100%"}}>
                 <ManagerSider
                     breadcrumb={
-                        [managerMenuItems.plan.main.label, managerMenuItems.plan.create.label]
+                        [managerMenuItems.analysis.main.label, managerMenuItems.analysis.room.label]
                     }
-                    defaultKey={managerMenuItems.plan.create.key}
+                    defaultKey={managerMenuItems.analysis.room.key}
                 >
                     <div>
                         {isInfoFetched ?
@@ -47,7 +48,7 @@ function RoomsAnalysis() {
                             : (<>
                                 <Form
                                     name="basic"
-                                    labelCol={{span: 8}}
+                                    labelCol={{span: 10}}
                                     wrapperCol={{span: 16}}
                                     onFinish={(values) => submitForm(values)}
                                     autoComplete="off"
@@ -68,6 +69,13 @@ function RoomsAnalysis() {
                                     >
                                         <Input/>
                                     </Form.Item>
+                                    <Button
+                                        type="primary"
+                                        htmlType="submit"
+                                        style={{ width: "50%" }}
+                                    >
+                                        Подтвердить
+                                    </Button>
                                 </Form>
                             </>)}
                     </div>

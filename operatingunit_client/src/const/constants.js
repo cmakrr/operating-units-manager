@@ -151,4 +151,7 @@ export const menuItemsKeyRoutes = {
   [managerMenuItems.users.main.key]: (role) => clientApi.manager.users(role),
   [managerMenuItems.patients.key]: clientApi.manager.patients,
   [managerMenuItems.workers.key]: clientApi.manager.workers,
+  [managerMenuItems.analysis.operations.key]: clientApi.manager.operationsAnalysis,
+  [managerMenuItems.analysis.worker.key]: clientApi.manager.workersAnalysis,
+  [managerMenuItems.analysis.room.key]: clientApi.manager.operatingRoomsAnalysis
 };

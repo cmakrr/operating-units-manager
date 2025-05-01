@@ -11,7 +11,7 @@ function AnalysisDatePicker({startDate, setStartDate, endDate, setEndDate}) {
                        rules={[{ required: true, message: 'Пожалуйста, выберите дату начала анализа!' }]}>
                 <DatePicker
                     format="YYYY-MM-DD"
-                    disabledDate={(current) => current && current > dayjs().startOf('day') && current > endDate}
+                    disabledDate={(current) => current && current > dayjs().startOf('day')}
                     selected={startDate}
                     onChange={(newValue) => setStartDate(newValue)}
                 />
@@ -20,7 +20,7 @@ function AnalysisDatePicker({startDate, setStartDate, endDate, setEndDate}) {
                        rules={[{ required: true, message: 'Пожалуйста, выберите дату операции!' }]}>
                 <DatePicker
                     format="YYYY-MM-DD"
-                    disabledDate={(current) => current && current > dayjs().startOf('day') && current < startDate}
+                    disabledDate={(current) => current && current > dayjs().startOf('day') }
                     selected={endDate}
                     onChange={(newValue) => setEndDate(endDate)}
                 />

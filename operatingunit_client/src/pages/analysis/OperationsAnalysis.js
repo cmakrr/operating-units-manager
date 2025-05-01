@@ -7,6 +7,7 @@ import MainHeader from "../../components/common/MainHeader";
 import {ManagerSider} from "../../components/sider/Siders";
 import AnalysisDatePicker from "./AnalysisDatePicker";
 import {getAnalysis} from "../../request/AnalysisRequests";
+import {createDateRange, validateDates} from "./CommonMethods";
 
 function OperationsAnalysis() {
     const [startDate, setStartDate] = useState(dayjs().add(-1, "d"));
@@ -15,10 +16,10 @@ function OperationsAnalysis() {
     const [isInfoFetched, setIsInfoFetched] = useState(false);
 
     async function submitForm(values){
-        const dateRange = {
-            "startDate": startDate,
-            "endDate": endDate
-        };
+        if(!validateDates(startDate, endDate)){
+            return;
+        }
+        const dateRange = createDateRange(startDate, endDate);
 
         const result = await getAnalysis(dateRange);
 
@@ -34,9 +35,9 @@ function OperationsAnalysis() {
             <div style={{ overflowX: "auto", width: "100%" }}>
                 <ManagerSider
                     breadcrumb={
-                        [managerMenuItems.plan.main.label, managerMenuItems.plan.create.label]
+                        [managerMenuItems.analysis.main.label, managerMenuItems.analysis.operations.label]
                     }
-                    defaultKey={managerMenuItems.plan.create.key}
+                    defaultKey={managerMenuItems.analysis.operations.key}
                 >
                     <div>
                         {isInfoFetched ?
@@ -47,13 +48,20 @@ function OperationsAnalysis() {
                             : (<>
                             <Form
                                 name="basic"
-                                labelCol={{ span: 8 }}
+                                labelCol={{ span: 10 }}
                                 wrapperCol={{ span: 16 }}
                                 onFinish={(values) => submitForm(values)}
                                 autoComplete="off"
                                 style={{ maxWidth: '400px', margin: '0 auto' }}
                             >
                                 <AnalysisDatePicker startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate}/>
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    style={{ width: "100%" }}
+                                >
+                                    Подтвердить
+                                </Button>
                             </Form>
                             </>)}
                     </div>

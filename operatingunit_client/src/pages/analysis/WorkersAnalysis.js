@@ -7,6 +7,7 @@ import MainHeader from "../../components/common/MainHeader";
 import {ManagerSider} from "../../components/sider/Siders";
 import AnalysisDatePicker from "./AnalysisDatePicker";
 import {getWorkersAnalysis} from "../../request/AnalysisRequests";
+import {createDateRange, validateDates} from "./CommonMethods";
 
 function WorkersAnalysis() {
     const [startDate, setStartDate] = useState(dayjs().add(-1, "d"));
@@ -15,10 +16,10 @@ function WorkersAnalysis() {
     const [isInfoFetched, setIsInfoFetched] = useState(false);
 
     async function submitForm(values) {
-        const dateRange = {
-            "startDate": startDate,
-            "endDate": endDate
-        };
+        if(!validateDates(startDate, endDate)){
+            return;
+        }
+        const dateRange = createDateRange(startDate, endDate);
 
         const result = await getWorkersAnalysis(values.workerId, dateRange);
 
@@ -34,9 +35,9 @@ function WorkersAnalysis() {
             <div style={{overflowX: "auto", width: "100%"}}>
                 <ManagerSider
                     breadcrumb={
-                        [managerMenuItems.plan.main.label, managerMenuItems.plan.create.label]
+                        [managerMenuItems.analysis.main.label, managerMenuItems.analysis.worker.label]
                     }
-                    defaultKey={managerMenuItems.plan.create.key}
+                    defaultKey={managerMenuItems.analysis.worker.key}
                 >
                     <div>
                         {isInfoFetched ?
@@ -47,7 +48,7 @@ function WorkersAnalysis() {
                             : (<>
                                 <Form
                                     name="basic"
-                                    labelCol={{span: 8}}
+                                    labelCol={{span: 10}}
                                     wrapperCol={{span: 16}}
                                     onFinish={(values) => submitForm(values)}
                                     autoComplete="off"
@@ -56,7 +57,7 @@ function WorkersAnalysis() {
                                     <AnalysisDatePicker startDate={startDate} endDate={endDate}
                                                         setStartDate={setStartDate} setEndDate={setEndDate}/>
                                     <Form.Item
-                                        label="Идентификатор работника"
+                                        label="Работник(id)"
                                         name="workerId"
                                         rules={[
                                             {
@@ -68,6 +69,13 @@ function WorkersAnalysis() {
                                     >
                                         <InputNumber min={1}/>
                                     </Form.Item>
+                                    <Button
+                                        type="primary"
+                                        htmlType="submit"
+                                        style={{ width: "50%" }}
+                                    >
+                                        Подтвердить
+                                    </Button>
                                 </Form>
                             </>)}
                     </div>

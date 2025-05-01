@@ -22,12 +22,16 @@ public class OperationsAnalyzerService {
     private final OperationRepository operationRepository;
 
     public OperationsOverallAnalysis createOperationsOverallAnalysis(LocalDate start, LocalDate end) {
-        List<Operation> operations = operationRepository.findByDateBetween(start, end);
+        LocalDateTime startTime = start.atStartOfDay();
+        LocalDateTime endTime = start.atTime(23,59);
+        List<Operation> operations = operationRepository.findByDateBetween(startTime, endTime);
         return createOperationsOverallAnalysis(operations, start, end);
     }
 
     public OperationsAnalysisInfo createOperationsAnalysisInfo(LocalDate start, LocalDate end) {
-        List<Operation> operations = operationRepository.findByDateBetween(start, end);
+        LocalDateTime startTime = start.atStartOfDay();
+        LocalDateTime endTime = start.atTime(23,59);
+        List<Operation> operations = operationRepository.findByDateBetween(startTime, endTime);
         return createOperationsAnalysisInfo(operations, start, end);
     }
 
@@ -41,10 +45,10 @@ public class OperationsAnalyzerService {
 
         int operationsCount = operations.size();
         overallAnalysis.setAllOperationsCount(operationsCount);
-        int averageDuration = durationInMinutes / operationsCount;
+        int averageDuration = operationsCount == 0 ? 0 : durationInMinutes / operationsCount;
         overallAnalysis.setAverageOperationDurationInMinutes(averageDuration);
 
-        int analysisDaysRange = (int) (start.toEpochDay() - end.toEpochDay() + 1);
+        int analysisDaysRange = (int) (end.toEpochDay() - start.toEpochDay() + 1);
         float averageOperationsPerDay = ((float) operationsCount) / analysisDaysRange;
         overallAnalysis.setAverageOperationsPerDay(averageOperationsPerDay);
         int averageOperationMinutesPerDay = durationInMinutes / analysisDaysRange;
@@ -53,7 +57,7 @@ public class OperationsAnalyzerService {
         int stepsCount = operations.stream()
                 .mapToInt(operation -> operation.getOperationFact().getSteps().size())
                 .sum();
-        float averageStepsCount = ((float) stepsCount) / operationsCount;
+        float averageStepsCount = operationsCount == 0 ? 0 :((float) stepsCount) / operationsCount;
         overallAnalysis.setAverageOperationSteps(averageStepsCount);
 
         return overallAnalysis;
@@ -65,14 +69,14 @@ public class OperationsAnalyzerService {
         result.setOverallAnalysis(overallAnalysis);
         Map<LocalDate, List<OperationInfo>> operationsInfoByDate = new HashMap<>();
 
-        int daysCount = (int) (start.toEpochDay() - end.toEpochDay());
-        for (int i = 0; i < daysCount; i++) {
+        int daysCount = (int) (end.toEpochDay() - start.toEpochDay());
+        for (int i = 0; i <= daysCount; i++) {
             LocalDate date = start.plusDays(i);
             operationsInfoByDate.put(date, new ArrayList<>());
         }
 
         for (Operation operation : operations) {
-            List<OperationInfo> infoList = operationsInfoByDate.get(operation.getDate());
+            List<OperationInfo> infoList = operationsInfoByDate.get(operation.getOperationFact().getEndTime().toLocalDate());
             OperationInfo info = createOperationInfo(operation);
             infoList.add(info);
         }
