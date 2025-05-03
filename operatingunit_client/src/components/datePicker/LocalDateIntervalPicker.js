@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import locale from "antd/locale/ru_RU";
 const { RangePicker } = DatePicker;
 
-const rangePresets = [
+export const rangePresets = [
   {
     label: "Сегодня",
     value: [dayjs().startOf("day"), dayjs().endOf("day")],

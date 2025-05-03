@@ -61,6 +61,24 @@ export const patientsTableLocale = {
   ),
 };
 
+export const logsTableLocale = {
+  ...tableLocale,
+  emptyText: (
+      <Empty
+          description={`Логи отсутствуют.`}
+      />
+  ),
+};
+
+export const operationsTableLocale = {
+  ...tableLocale,
+  emptyText: (
+      <Empty
+          description={`Операции отсутствуют.`}
+      />
+  ),
+};
+
 export const workersTableLocale = {
   ...tableLocale,
   emptyText: (
@@ -131,6 +149,8 @@ export const managerMenuItems = {
   statistics: { label: `Статистика`, key: `Statistics` },
   patients: { label: `Пациенты`, key: `Patients`},
   workers: {label: `Работники`, key: `Workers`},
+  operations: {label: `История операций`, key: `Operations`},
+  logs: {label: `Логи`, key: `Logs`},
   analysis: {
     main: { label: "Анализ", key: "Analysis" },
     worker: { label: "Работники", key: "WorkersAnalysis" },
@@ -153,5 +173,7 @@ export const menuItemsKeyRoutes = {
   [managerMenuItems.workers.key]: clientApi.manager.workers,
   [managerMenuItems.analysis.operations.key]: clientApi.manager.operationsAnalysis,
   [managerMenuItems.analysis.worker.key]: clientApi.manager.workersAnalysis,
-  [managerMenuItems.analysis.room.key]: clientApi.manager.operatingRoomsAnalysis
+  [managerMenuItems.analysis.room.key]: clientApi.manager.operatingRoomsAnalysis,
+  [managerMenuItems.operations.key]: clientApi.manager.operations,
+  [managerMenuItems.logs.key]: clientApi.manager.logs
 };

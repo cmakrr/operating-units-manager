@@ -1,5 +1,6 @@
 package com.rnpc.operatingunit.service;
 
+import com.rnpc.operatingunit.analyzer.controller.DateRangeRequest;
 import com.rnpc.operatingunit.dto.request.operation.OperationRequest;
 import com.rnpc.operatingunit.dto.response.operation.OperationAvailableInfoResponse;
 import com.rnpc.operatingunit.model.OperatingRoom;
@@ -23,6 +24,8 @@ public interface OperationService {
     Map<LocalDate, Map<OperatingRoom, List<Operation>>> getOngoingByDates(LocalDate start, LocalDate end);
 
     List<Operation> getAllByOperatingRoomIpAndDate(String ip, LocalDate date);
+
+    List<Operation> getBetweenDates(DateRangeRequest dateRangeRequest);
 
     List<Operation> getAllByOperatingRoomNameAndDates(String name, LocalDate startDate, LocalDate endDate);
 

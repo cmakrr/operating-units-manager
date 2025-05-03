@@ -1,11 +1,14 @@
 package com.rnpc.operatingunit.service.impl;
 
 import com.rnpc.operatingunit.enums.AccessRoleType;
+import com.rnpc.operatingunit.enums.LogAffectedEntityType;
+import com.rnpc.operatingunit.enums.LogOperationType;
 import com.rnpc.operatingunit.exception.entity.EntityDuplicateException;
 import com.rnpc.operatingunit.exception.entity.EntityNotFoundException;
 import com.rnpc.operatingunit.exception.UnauthorizedAction;
 import com.rnpc.operatingunit.model.AccessRole;
 import com.rnpc.operatingunit.model.AppUser;
+import com.rnpc.operatingunit.model.LogMethodExecution;
 import com.rnpc.operatingunit.repository.AccessRoleRepository;
 import com.rnpc.operatingunit.repository.AppUserRepository;
 import com.rnpc.operatingunit.service.AppUserService;
@@ -88,6 +91,7 @@ public class DefaultAppUserService implements AppUserService {
     }
 
     @Override
+    @LogMethodExecution(entity = LogAffectedEntityType.USER, operation = LogOperationType.CREATE)
     public AppUser registerNewUser(AppUser appUser) {
         if(appUser.getRole().getRole().getHierarchyPosition() > 0) {
             validateUserAccessToActionOn(appUser);
@@ -97,6 +101,7 @@ public class DefaultAppUserService implements AppUserService {
     }
 
     @Override
+    @LogMethodExecution(entity = LogAffectedEntityType.USER, operation = LogOperationType.EDIT)
     public void updatePassword(Long id, String password) {
         AppUser appUser = findById(id);
         validateUserAccessToActionOn(appUser);
@@ -107,6 +112,7 @@ public class DefaultAppUserService implements AppUserService {
     }
 
     @Override
+    @LogMethodExecution(entity = LogAffectedEntityType.USER, operation = LogOperationType.DELETE)
     public void deleteById(Long id) {
         AppUser appUser = findById(id);
         validateUserAccessToActionOn(appUser);
@@ -115,6 +121,7 @@ public class DefaultAppUserService implements AppUserService {
     }
 
     @Transactional
+    @LogMethodExecution(entity = LogAffectedEntityType.USER, operation = LogOperationType.DELETE)
     public void deleteByLogin(String login) {
         appUserRepository.deleteByLogin(login);
     }

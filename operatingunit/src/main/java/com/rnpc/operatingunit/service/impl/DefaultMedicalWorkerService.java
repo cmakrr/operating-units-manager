@@ -1,6 +1,9 @@
 package com.rnpc.operatingunit.service.impl;
 
+import com.rnpc.operatingunit.enums.LogAffectedEntityType;
+import com.rnpc.operatingunit.enums.LogOperationType;
 import com.rnpc.operatingunit.enums.MedicalWorkerOperationRole;
+import com.rnpc.operatingunit.model.LogMethodExecution;
 import com.rnpc.operatingunit.model.MedicalWorker;
 import com.rnpc.operatingunit.model.OperationFact;
 import com.rnpc.operatingunit.model.OperationPlan;
@@ -121,6 +124,7 @@ public class DefaultMedicalWorkerService implements MedicalWorkerService {
     }
 
     @Override
+    @LogMethodExecution(entity = LogAffectedEntityType.WORKER, operation = LogOperationType.CREATE)
     public void save(MedicalWorker medicalWorker) {
         medicalWorkerRepository.save(medicalWorker);
     }

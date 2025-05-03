@@ -42,6 +42,10 @@ export const serverApi = {
     getAllForDate: (date) => `/api/v1/operations?date=${date}`,
     getOngoingForDates: (startDate, endDate) =>
       `/api/v1/operations/ongoing?startDate=${startDate}&endDate=${endDate}`,
+    getBetweenDates: `/api/v1/operations/dates`
+  },
+  logs: {
+    getBetweenDates: `/api/v1/logs`
   },
   report: {
     operation: (id) => `/api/v1/report/operations/${id}`,

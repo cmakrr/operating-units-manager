@@ -1,10 +1,13 @@
 package com.rnpc.operatingunit.service.impl;
 
+import com.rnpc.operatingunit.analyzer.controller.DateRangeRequest;
 import com.rnpc.operatingunit.dto.request.operation.OperationRequest;
 import com.rnpc.operatingunit.dto.response.operation.MedicalWorkerInfoResponse;
 import com.rnpc.operatingunit.dto.response.operation.OperatingRoomInfoResponse;
 import com.rnpc.operatingunit.dto.response.operation.OperationAvailableInfoResponse;
 import com.rnpc.operatingunit.dto.response.operation.PatientInfoResponse;
+import com.rnpc.operatingunit.enums.LogAffectedEntityType;
+import com.rnpc.operatingunit.enums.LogOperationType;
 import com.rnpc.operatingunit.enums.PatientStatus;
 import com.rnpc.operatingunit.exception.operation.OperationNotFoundException;
 import com.rnpc.operatingunit.exception.plan.OperationPlanCantBeModifiedException;
@@ -74,6 +77,12 @@ public class DefaultOperationService implements OperationService {
         return result;
     }
 
+    public List<Operation> getBetweenDates(DateRangeRequest dateRangeRequest){
+        LocalDateTime start = dateRangeRequest.getStartDate().atStartOfDay();
+        LocalDateTime end = dateRangeRequest.getEndDate().atTime(23, 59);
+        return operationRepository.findByDateBetween(start, end );
+    }
+
     public List<Operation> getCurrent() {
         return operationRepository
                 .findAllByDateAndOperationFact_StartTimeIsNotNullAndOperationFact_EndTimeIsNull(LocalDate.now());
@@ -81,6 +90,7 @@ public class DefaultOperationService implements OperationService {
 
     //#TODO: implement logic like for merge conflict resolution
     @Transactional
+    @LogMethodExecution(entity = LogAffectedEntityType.OPERATION, operation = LogOperationType.CREATE)
     public List<Operation> saveAll(List<Operation> operations, LocalDate date) {
         List<Operation> dayOperations = operationRepository.findAllByDate(date);
         if (CollectionUtils.isEmpty(dayOperations)) {
@@ -127,6 +137,7 @@ public class DefaultOperationService implements OperationService {
     }
 
     @Override
+    @LogMethodExecution(entity = LogAffectedEntityType.OPERATION, operation = LogOperationType.CREATE)
     public void save(OperationRequest operationRequest) {
         Operation operation = new Operation();
 

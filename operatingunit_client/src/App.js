@@ -24,6 +24,8 @@ import CreateOperationPage from "./pages/manager/CreateOperationPage";
 import RoomsAnalysis from "./pages/analysis/RoomsAnalysis";
 import WorkersAnalysis from "./pages/analysis/WorkersAnalysis";
 import OperationsAnalysis from "./pages/analysis/OperationsAnalysis";
+import LogPage from "./pages/manager/LogPage";
+import OperationsHistoryPage from "./pages/manager/OperationsHistoryPage";
 
 axios.defaults.baseURL = `http://localhost:80`;
 
@@ -159,6 +161,16 @@ function App() {
                 <Route
                     path={clientApi.manager.operationsAnalysis}
                     element={<OperationsAnalysis />}
+                />
+
+                <Route
+                    path={clientApi.manager.logs}
+                    element={<LogPage />}
+                />
+
+                <Route
+                    path={clientApi.manager.operations}
+                    element={<OperationsHistoryPage/>}
                 />
               </Routes>
             </Router>

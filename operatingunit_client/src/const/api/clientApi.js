@@ -30,6 +30,8 @@ export const clientApi = {
     workers: `/management/workers`,
     operatingRoomsAnalysis: `/management/analysis/rooms`,
     workersAnalysis: `/management/analysis/workers`,
-    operationsAnalysis: `/management/analysis/operations`
+    operationsAnalysis: `/management/analysis/operations`,
+    operations: `/management/operations`,
+    logs: `/management/logs`
   },
 };

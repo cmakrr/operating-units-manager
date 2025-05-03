@@ -18,6 +18,15 @@ export async function getInfo(startTimeString, endTimeString) {
     }
 }
 
+export async function getBetweenDates(dateRange) {
+    try {
+        const response = await sendPostRequest(serverApi.operations.getBetweenDates, dateRange);
+        return response?.data;
+    } catch (error) {
+        processResponseError(error, FORBIDDEN_MESSAGE);
+    }
+}
+
 export async function saveOperation(operation) {
     try {
         await sendPostRequest(serverApi.operationPlan.create, operation);

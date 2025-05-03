@@ -1,13 +1,13 @@
 import React, {useState} from "react";
 import {
-    AlertOutlined, AreaChartOutlined,
+    AlertOutlined, AreaChartOutlined, DatabaseOutlined,
     EyeOutlined,
     FileAddOutlined,
     FileOutlined,
     FileSearchOutlined, MedicineBoxOutlined,
     PieChartOutlined, PlusCircleOutlined,
     RobotOutlined,
-    TeamOutlined,
+    TeamOutlined, ToolOutlined,
     UserOutlined,
 } from "@ant-design/icons";
 import {Breadcrumb, Layout, Menu} from "antd";
@@ -125,6 +125,11 @@ export const ManagerSider = ({children, breadcrumb, header, defaultKey}) => {
         ),
         (userRole === managerMenuItems.users.general_manager.key ||
             userRole === managerMenuItems.users.admin.key) &&
+        getItem(managerMenuItems.operations.label,
+            managerMenuItems.operations.key,
+            <ToolOutlined />),
+        (userRole === managerMenuItems.users.general_manager.key ||
+            userRole === managerMenuItems.users.admin.key) &&
         getItem(managerMenuItems.patients.label,
             managerMenuItems.patients.key,
             <MedicineBoxOutlined/>),
@@ -159,6 +164,11 @@ export const ManagerSider = ({children, breadcrumb, header, defaultKey}) => {
                 )
             ],
         ),
+        (userRole === managerMenuItems.users.general_manager.key ||
+            userRole === managerMenuItems.users.admin.key) &&
+        getItem(managerMenuItems.logs.label,
+            managerMenuItems.logs.key,
+            <DatabaseOutlined />)
     ];
 
     return (
