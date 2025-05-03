@@ -61,6 +61,7 @@ public class OperationController {
         return modelMapper.map(operations, new TypeToken<List<OperationFullInfoResponse>>() {}.getType());
     }
 
+
     @GetMapping("/ongoing")
     @ResponseStatus(HttpStatus.OK)
     public List<OperationFullInfoResponse> getOngoingOperations(

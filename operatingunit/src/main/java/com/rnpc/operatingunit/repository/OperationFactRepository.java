@@ -13,7 +13,7 @@ public interface OperationFactRepository extends JpaRepository<OperationFact, Lo
     List<Long> findIdsBetweenDates(@Param("startDate") LocalDateTime startDate,
                                          @Param("endDate") LocalDateTime endDate);
 
-    @Query("SELECT e.id FROM OperationFact e WHERE e.startTime BETWEEN :startDate AND :endDate AND e.endTime > :endDate " +
+    @Query("SELECT e.id FROM OperationFact e WHERE e.startTime BETWEEN :startDate AND :endDate AND e.endTime < :endDate " +
             "AND (e.operator.id = :workerId OR e.assistant.id = :workerId OR e.transfusiologist.id = :workerId )" )
     List<Long> findIdsBetweenDatesWithWorker(@Param("startDate") LocalDateTime startDate,
                                             @Param("endDate") LocalDateTime endDate,

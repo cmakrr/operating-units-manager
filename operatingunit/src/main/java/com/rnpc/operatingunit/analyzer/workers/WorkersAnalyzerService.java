@@ -39,6 +39,6 @@ public class WorkersAnalyzerService {
             return null;
         }
         List<Long> operationIds =  factRepository.findIdsBetweenDatesWithWorker(start.atStartOfDay(), end.atTime(23,59), worker.get().getId());
-        return operationRepository.findAllByIdIn(operationIds);
+        return operationRepository.findAllByFactsId(operationIds);
     }
 }

@@ -30,7 +30,7 @@ public class OperationsAnalyzerService {
 
     public OperationsAnalysisInfo createOperationsAnalysisInfo(LocalDate start, LocalDate end) {
         LocalDateTime startTime = start.atStartOfDay();
-        LocalDateTime endTime = start.atTime(23,59);
+        LocalDateTime endTime = end.atTime(23,59);
         List<Operation> operations = operationRepository.findByDateBetween(startTime, endTime);
         return createOperationsAnalysisInfo(operations, start, end);
     }

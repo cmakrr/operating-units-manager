@@ -39,7 +39,7 @@ public class OperatingRoomAnalyzerService {
             return Collections.emptyList();
         }
         LocalDateTime startTime = start.atStartOfDay();
-        LocalDateTime endTime = start.atTime(23,59);
+        LocalDateTime endTime = end.atTime(23,59);
         return operationRepository.findBetweenDatesInOperatingRoom(startTime, endTime, operatingRoom.get().getId());
     }
 }

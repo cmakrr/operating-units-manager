@@ -13,7 +13,8 @@ import java.util.List;
 public interface OperationRepository extends JpaRepository<Operation, Long> {
     boolean existsByOperatingRoomId(Long id);
 
-    List<Operation> findAllByIdIn(List<Long> ids);
+    @Query("SELECT e FROM Operation e WHERE e.operationFact.id IN :ids" )
+    List<Operation> findAllByFactsId(List<Long> ids);
 
     List<Operation> findAllByDate(LocalDate date);
 
@@ -30,7 +31,7 @@ public interface OperationRepository extends JpaRepository<Operation, Long> {
     List<Operation> findByDateBetween(@Param("startDate") LocalDateTime startDate,
                                       @Param("endDate") LocalDateTime endDate);
 
-    @Query("SELECT e FROM Operation e WHERE e.operationFact.endTime BETWEEN :startDate AND :endDate AND e.operatingRoom.id = :roomId AND e.operationFact is not null" )
+    @Query("SELECT e FROM Operation e WHERE e.operationFact.endTime BETWEEN :startDate AND :endDate AND e.operatingRoom.id= :roomId AND e.operationFact is not null" )
     List<Operation> findBetweenDatesInOperatingRoom(@Param("startDate") LocalDateTime startDate,
                                              @Param("endDate") LocalDateTime endDate,
                                                     @Param("roomId") Long roomId);
