@@ -2,39 +2,29 @@ import MainHeader from "../../components/common/MainHeader";
 import {ManagerSider} from "../../components/sider/Siders";
 import {managerMenuItems} from "../../const/constants";
 import React, {useEffect, useState} from "react";
-import {OperationsTable} from "../../components/table/OperationsTable";
-import {useNavigate} from "react-router-dom";
-import {useLocation} from "react-router";
-import {getOngoingOperationReport} from "../../request/ReportRequests";
-import {locale} from "dayjs";
-import {clientApi} from "../../const/api/clientApi";
-import LocalDateIntervalPicker from "../../components/datePicker/LocalDateIntervalPicker";
-import {Button} from "antd";
-import {getOngoingOperations} from "../../request/Requests";
+import dayjs from "dayjs";
+import {rangePresets} from "../../components/datePicker/LocalDateIntervalPicker";
+import {ConfigProvider, DatePicker} from "antd";
+import {createDateRange} from "../analysis/CommonMethods";
+import {getLogs} from "../../request/LogsRequests";
+import LogsTable from "../../components/table/LogsTable";
+import locale from "antd/locale/ru_RU";
+import {getBetweenDates} from "../../request/OperationRequests";
+import {OperationsHistoryTable} from "../../components/table/OperationsHistoryTable";
+const { RangePicker } = DatePicker;
 
-locale("ru");
-
-const handleReportGeneration = async (startDate, endDate) => {
-    try {
-        await getOngoingOperationReport(startDate, endDate);
-    } catch (error) {
-        console.error("Произошла ошибка при получении отчета:", error);
-    }
-};
 
 function OperationsHistoryPage() {
     const [operations, setOperations] = useState([]);
-    const navigate = useNavigate();
-    const location = useLocation();
-    const searchParams = new URLSearchParams(location.search);
-    const startDate = searchParams.get("startDate");
-    const endDate = searchParams.get("endDate");
+    const [startDate, setStartDate] = useState(dayjs());
+    const [endDate, setEndDate] = useState(dayjs());
 
     useEffect(() => {
         async function fetchData() {
+            const dateRange = createDateRange(startDate, endDate);
             try {
-                const operationsData = await getOngoingOperations(startDate, endDate);
-                setOperations(operationsData);
+                const operations = await getBetweenDates(dateRange);
+                setOperations(operations);
             } catch (error) {
                 console.error("Произошла ошибка при получении операций:", error);
             }
@@ -43,32 +33,33 @@ function OperationsHistoryPage() {
         fetchData();
     }, [startDate, endDate]);
 
+    function onRangeChange(values) {
+        setStartDate(dayjs(values[0]).format(`YYYY-MM-DD`));
+        setEndDate(dayjs(values[1]).format(`YYYY-MM-DD`));
+    }
+
+    const disabledDate = (current) => {
+        return current && current > dayjs().endOf("day");
+    };
+
     return (
         <MainHeader>
             <div style={{overflowX: "auto", width: "100%"}}>
                 <ManagerSider
-                    breadcrumb={[managerMenuItems.statistics.label]}
-                    defaultKey={managerMenuItems.statistics.key}
+                    breadcrumb={[managerMenuItems.operations.label]}
+                    defaultKey={managerMenuItems.operations.key}
                 >
                     <div>
-                        Статистика по начатым и завершенным операциям за{" "}
-                        <LocalDateIntervalPicker
-                            navigate={navigate}
-                            url={clientApi.manager.statisticsForDates}
-                            defaultStartValue={startDate}
-                            defaultEndValue={endDate}
-                        ></LocalDateIntervalPicker>
-                        <p/>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            style={{width: "100%"}}
-                            onClick={() => handleReportGeneration(startDate, endDate)}
-                        >
-                            Сформировать отчет о загруженности операционных
-                        </Button>
-                        <p/>
-                        <OperationsTable operations={operations} statistics={true} forManager={true}/>
+                        История операций за {" "}
+                        <ConfigProvider locale={locale}>
+                            <RangePicker
+                                presets={rangePresets}
+                                onChange={onRangeChange}
+                                disabledDate={disabledDate}
+                                defaultValue={[startDate, endDate]}
+                            />
+                        </ConfigProvider>
+                        <OperationsHistoryTable operations={operations}/>
                     </div>
                 </ManagerSider>
             </div>

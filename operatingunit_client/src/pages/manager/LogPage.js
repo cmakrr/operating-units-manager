@@ -24,7 +24,7 @@ function LogPage() {
                 const logs = await getLogs(dateRange);
                 setLogs(logs);
             } catch (error) {
-                console.error("Произошла ошибка при получении операций:", error);
+                console.error("Произошла ошибка при получении логов:", error);
             }
         }
 

@@ -97,6 +97,15 @@ export const tableOperationsLocale = {
   ),
 };
 
+export const tableOperationsHistoryLocale = {
+  ...tableLocale,
+  emptyText: (
+      <Empty
+          description={`За данный период времени не было проведено операций`}
+      />
+  ),
+};
+
 export const operationStepStatuses = {
   process: ["STARTED"],
   finish: ["FINISHED"],
