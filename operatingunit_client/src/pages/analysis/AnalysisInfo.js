@@ -224,7 +224,7 @@ function AnalysisInfo(info) {
                             type="monotone"
                             dataKey="count"
                             stroke="#82ca9d"
-                            name="Часы"
+                            name="Операции"
                             strokeWidth={4}
                             dot={false}
                             data={opsPerDayPrediction}
