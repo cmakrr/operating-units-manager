@@ -22,7 +22,7 @@ function AnalysisDatePicker({startDate, setStartDate, endDate, setEndDate}) {
                     format="YYYY-MM-DD"
                     disabledDate={(current) => current && current > dayjs().startOf('day') }
                     selected={endDate}
-                    onChange={(newValue) => setEndDate(endDate)}
+                    onChange={(newValue) => setEndDate(newValue)}
                 />
             </Form.Item>
         </ConfigProvider>
