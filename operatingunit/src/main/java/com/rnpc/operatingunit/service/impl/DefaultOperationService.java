@@ -1,12 +1,17 @@
 package com.rnpc.operatingunit.service.impl;
 
+import com.rnpc.operatingunit.analyzer.controller.DateRangeRequest;
+import com.rnpc.operatingunit.dto.request.operation.OperationRequest;
+import com.rnpc.operatingunit.dto.response.operation.MedicalWorkerInfoResponse;
+import com.rnpc.operatingunit.dto.response.operation.OperatingRoomInfoResponse;
+import com.rnpc.operatingunit.dto.response.operation.OperationAvailableInfoResponse;
+import com.rnpc.operatingunit.dto.response.operation.PatientInfoResponse;
+import com.rnpc.operatingunit.enums.LogAffectedEntityType;
+import com.rnpc.operatingunit.enums.LogOperationType;
+import com.rnpc.operatingunit.enums.PatientStatus;
 import com.rnpc.operatingunit.exception.operation.OperationNotFoundException;
 import com.rnpc.operatingunit.exception.plan.OperationPlanCantBeModifiedException;
-import com.rnpc.operatingunit.model.OperatingRoom;
-import com.rnpc.operatingunit.model.Operation;
-import com.rnpc.operatingunit.model.OperationFact;
-import com.rnpc.operatingunit.model.OperationPlan;
-import com.rnpc.operatingunit.model.Patient;
+import com.rnpc.operatingunit.model.*;
 import com.rnpc.operatingunit.repository.OperationRepository;
 import com.rnpc.operatingunit.service.MedicalWorkerService;
 import com.rnpc.operatingunit.service.OperatingRoomService;
@@ -16,6 +21,7 @@ import io.hypersistence.utils.hibernate.type.basic.Inet;
 import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -23,15 +29,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -45,6 +43,7 @@ public class DefaultOperationService implements OperationService {
     private final MedicalWorkerService medicalWorkerService;
     private final PatientService patientService;
     private final OperatingRoomService operatingRoomService;
+    private final ModelMapper mapper;
 
     public Operation getById(Long id) {
         Objects.requireNonNull(id);
@@ -78,6 +77,12 @@ public class DefaultOperationService implements OperationService {
         return result;
     }
 
+    public List<Operation> getBetweenDates(DateRangeRequest dateRangeRequest){
+        LocalDateTime start = dateRangeRequest.getStartDate().atStartOfDay();
+        LocalDateTime end = dateRangeRequest.getEndDate().atTime(23, 59);
+        return operationRepository.findByDateBetween(start, end );
+    }
+
     public List<Operation> getCurrent() {
         return operationRepository
                 .findAllByDateAndOperationFact_StartTimeIsNotNullAndOperationFact_EndTimeIsNull(LocalDate.now());
@@ -85,6 +90,7 @@ public class DefaultOperationService implements OperationService {
 
     //#TODO: implement logic like for merge conflict resolution
     @Transactional
+    @LogMethodExecution(entity = LogAffectedEntityType.OPERATION, operation = LogOperationType.CREATE)
     public List<Operation> saveAll(List<Operation> operations, LocalDate date) {
         List<Operation> dayOperations = operationRepository.findAllByDate(date);
         if (CollectionUtils.isEmpty(dayOperations)) {
@@ -100,7 +106,14 @@ public class DefaultOperationService implements OperationService {
     }
 
     public Operation save(Operation operation) {
+        updatePatientStatus(operation);
         return operationRepository.save(operation);
+    }
+
+    private void updatePatientStatus(Operation operation){
+        if(operation.getDate().isAfter(LocalDate.now()) || operation.getDate().equals(LocalDate.now())){
+            operation.getPatient().setStatus(PatientStatus.IN_HOSPITAL);
+        }
     }
 
     @Override
@@ -119,8 +132,56 @@ public class DefaultOperationService implements OperationService {
 
     public void setOperationFact(@Nonnull Operation operation, OperationFact operationFact) {
         operation.setOperationFact(operationFact);
-
+        updatePatientStatus(operation);
         operationRepository.save(operation);
+    }
+
+    @Override
+    @LogMethodExecution(entity = LogAffectedEntityType.OPERATION, operation = LogOperationType.CREATE)
+    public void save(OperationRequest operationRequest) {
+        Operation operation = new Operation();
+
+        MedicalWorker transfusiologist = medicalWorkerService.findById(operationRequest.getTransfusiologistId());
+        MedicalWorker assistant = medicalWorkerService.findById(operationRequest.getAssistantId());
+        MedicalWorker operator = medicalWorkerService.findById(operationRequest.getOperatorId());
+        Patient patient = patientService.getPatient(operationRequest.getPatientId());
+        OperatingRoom room = operatingRoomService.findById(operationRequest.getOperatingRoomId());
+
+        OperationPlan plan = new OperationPlan();
+        plan.setTransfusiologist(transfusiologist);
+        plan.setOperator(operator);
+        plan.setAssistant(assistant);
+        plan.setEndTime(operationRequest.getEndTime());
+        plan.setStartTime(operationRequest.getStartTime());
+        operation.setOperationPlan(plan);
+
+        operation.setPatient(patient);
+        operation.setOperatingRoom(room);
+
+        operation.setOperationName(operationRequest.getOperationName());
+        operation.setDate(operationRequest.getDate());
+        operation.setPatient(patientService.getPatient(operationRequest.getPatientId()));
+        operation.setInstruments(operation.getInstruments());
+        updatePatientStatus(operation);
+        operationRepository.save(operation);
+    }
+
+    @Override
+    public OperationAvailableInfoResponse getAvailableInfo(LocalDateTime start, LocalDateTime end) {
+        List<MedicalWorkerInfoResponse> freeWorkers = medicalWorkerService.findAvailableWorkers(start, end)
+                .stream().map(x -> mapper.map(x, MedicalWorkerInfoResponse.class))
+                .toList();
+        List<OperatingRoomInfoResponse> freeRooms = operatingRoomService.findFreeRooms(start, end)
+                .stream().map(x -> mapper.map(x, OperatingRoomInfoResponse.class))
+                .toList();
+        List<PatientInfoResponse> freePatients = patientService.findAvailablePatients(start, end)
+                .stream().map(x -> mapper.map(x, PatientInfoResponse.class))
+                .toList();
+        OperationAvailableInfoResponse response = new OperationAvailableInfoResponse();
+        response.setAvailableWorkers(freeWorkers);
+        response.setAvailableOperatingRooms(freeRooms);
+        response.setAvailablePatients(freePatients);
+        return response;
     }
 
     private Set<OperatingRoom> findConflictOperatingRooms(List<Operation> existingOperations,
@@ -179,7 +240,7 @@ public class DefaultOperationService implements OperationService {
             trySetLastOperationEndTimeIfNot(sortedByStartTimeOperations.get(sortedByStartTimeOperations.size() - 1));
 
             operations.forEach(this::populateMedicalWorkersAndPatientAndOperatingRoom);
-
+            operations.forEach(this::updatePatientStatus);
 
             operationRepository.saveAll(operations);
             log.info("Saved [{}] operations", operations.size());

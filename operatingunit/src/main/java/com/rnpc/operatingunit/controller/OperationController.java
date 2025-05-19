@@ -1,5 +1,6 @@
 package com.rnpc.operatingunit.controller;
 
+import com.rnpc.operatingunit.analyzer.controller.DateRangeRequest;
 import com.rnpc.operatingunit.dto.response.operation.OperationFullInfoResponse;
 import com.rnpc.operatingunit.dto.response.operation.OperationShortInfoResponse;
 import com.rnpc.operatingunit.dto.response.operation.OperationStepStatusResponse;
@@ -13,6 +14,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -46,6 +49,15 @@ public class OperationController {
         return operationResponse;
     }
 
+    @PostMapping("/dates")
+    public List<OperationFullInfoResponse> getOperationsBetweenDates(
+            @RequestBody DateRangeRequest dateRangeRequest) {
+        List<Operation> operations = operationService.getBetweenDates(dateRangeRequest);
+
+        return modelMapper.map(operations, new TypeToken<List<OperationFullInfoResponse>>() {
+        }.getType());
+    }
+
     @GetMapping("/shortInfo/{id}")
     @ResponseStatus(HttpStatus.OK)
     public OperationShortInfoResponse getOperationShortInfo(@PathVariable Long id) {
@@ -58,8 +70,10 @@ public class OperationController {
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         List<Operation> operations = operationService.getAllByDate(date);
 
-        return modelMapper.map(operations, new TypeToken<List<OperationFullInfoResponse>>() {}.getType());
+        return modelMapper.map(operations, new TypeToken<List<OperationFullInfoResponse>>() {
+        }.getType());
     }
+
 
     @GetMapping("/ongoing")
     @ResponseStatus(HttpStatus.OK)
@@ -67,14 +81,16 @@ public class OperationController {
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         List<Operation> operations = operationService.getOngoingOperationsByDates(startDate, endDate);
-        return modelMapper.map(operations, new TypeToken<List<OperationFullInfoResponse>>() {}.getType());
+        return modelMapper.map(operations, new TypeToken<List<OperationFullInfoResponse>>() {
+        }.getType());
     }
 
     @GetMapping("/current")
     @ResponseStatus(HttpStatus.OK)
     public List<OperationFullInfoResponse> getCurrentOperations() {
         List<Operation> operations = operationService.getCurrent();
-        return modelMapper.map(operations, new TypeToken<List<OperationFullInfoResponse>>() {}.getType());
+        return modelMapper.map(operations, new TypeToken<List<OperationFullInfoResponse>>() {
+        }.getType());
     }
 
 }

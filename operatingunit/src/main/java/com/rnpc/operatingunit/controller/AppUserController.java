@@ -58,5 +58,4 @@ public class AppUserController {
     public void deleteAppUser(@PathVariable Long appUserId) {
         appUserService.deleteById(appUserId);
     }
-
 }

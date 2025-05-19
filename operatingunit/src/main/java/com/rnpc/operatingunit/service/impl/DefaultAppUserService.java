@@ -1,10 +1,15 @@
 package com.rnpc.operatingunit.service.impl;
 
 import com.rnpc.operatingunit.enums.AccessRoleType;
+import com.rnpc.operatingunit.enums.LogAffectedEntityType;
+import com.rnpc.operatingunit.enums.LogOperationType;
 import com.rnpc.operatingunit.exception.entity.EntityDuplicateException;
 import com.rnpc.operatingunit.exception.entity.EntityNotFoundException;
 import com.rnpc.operatingunit.exception.UnauthorizedAction;
+import com.rnpc.operatingunit.model.AccessRole;
 import com.rnpc.operatingunit.model.AppUser;
+import com.rnpc.operatingunit.model.LogMethodExecution;
+import com.rnpc.operatingunit.repository.AccessRoleRepository;
 import com.rnpc.operatingunit.repository.AppUserRepository;
 import com.rnpc.operatingunit.service.AppUserService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +37,10 @@ public class DefaultAppUserService implements AppUserService {
     private static final String NOT_FOUND_WITH_LOGIN = NOT_FOUND_WITH + "login %s";
 
     private final AppUserRepository appUserRepository;
+    private final AccessRoleRepository accessRoleRepository;
     private final PasswordEncoder passwordEncoder;
+
+
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -71,13 +79,29 @@ public class DefaultAppUserService implements AppUserService {
     }
 
     @Override
+    public List<AppUser> getByRoleIn(List<String> roles) {
+        List<AccessRole> roleEntities = accessRoleRepository.findAll();
+        return appUserRepository.findAllByRoleIn(roleEntities);
+    }
+
+
+    public AppUser registerTestUser(AppUser appUser){
+        appUser.setRole(accessRoleRepository.findByRole(AccessRoleType.ADMIN).get());
+        return saveNewUser(appUser);
+    }
+
+    @Override
+    @LogMethodExecution(entity = LogAffectedEntityType.USER, operation = LogOperationType.CREATE)
     public AppUser registerNewUser(AppUser appUser) {
-        validateUserAccessToActionOn(appUser);
+        if(appUser.getRole().getRole().getHierarchyPosition() > 0) {
+            validateUserAccessToActionOn(appUser);
+        }
 
         return saveNewUser(appUser);
     }
 
     @Override
+    @LogMethodExecution(entity = LogAffectedEntityType.USER, operation = LogOperationType.EDIT)
     public void updatePassword(Long id, String password) {
         AppUser appUser = findById(id);
         validateUserAccessToActionOn(appUser);
@@ -88,6 +112,7 @@ public class DefaultAppUserService implements AppUserService {
     }
 
     @Override
+    @LogMethodExecution(entity = LogAffectedEntityType.USER, operation = LogOperationType.DELETE)
     public void deleteById(Long id) {
         AppUser appUser = findById(id);
         validateUserAccessToActionOn(appUser);
@@ -96,6 +121,7 @@ public class DefaultAppUserService implements AppUserService {
     }
 
     @Transactional
+    @LogMethodExecution(entity = LogAffectedEntityType.USER, operation = LogOperationType.DELETE)
     public void deleteByLogin(String login) {
         appUserRepository.deleteByLogin(login);
     }
@@ -140,7 +166,7 @@ public class DefaultAppUserService implements AppUserService {
     }
 
     private boolean isValidHierarchyPositionForAction(int current, int another) {
-        return current >= another;
+        return current > another;
     }
 
     private void throwUnauthorizedActionException(String role) {

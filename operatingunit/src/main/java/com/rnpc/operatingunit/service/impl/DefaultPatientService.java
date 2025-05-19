@@ -1,5 +1,6 @@
 package com.rnpc.operatingunit.service.impl;
 
+import com.rnpc.operatingunit.enums.PatientStatus;
 import com.rnpc.operatingunit.model.Patient;
 import com.rnpc.operatingunit.repository.PatientRepository;
 import com.rnpc.operatingunit.service.PatientService;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -33,6 +36,44 @@ public class DefaultPatientService implements PatientService {
         }
 
         return patient;
+    }
+
+    @Override
+    public void savePatient(Patient patient) {
+        patientRepository.save(patient);
+    }
+
+    @Override
+    public Patient getPatient(Long id) {
+        return patientRepository.findById(id).get();
+    }
+
+    @Override
+    public List<Patient> findAllPatientsInHospital() {
+        return patientRepository.findByStatus(PatientStatus.IN_HOSPITAL);
+    }
+
+    @Override
+    public List<Patient> findAvailablePatients(LocalDateTime start, LocalDateTime end) {
+        return patientRepository.findAvailablePatients(start, end);
+    }
+
+    @Override
+    public List<Patient> findAll() {
+        return patientRepository.findAll();
+    }
+
+
+    @Override
+    public List<Patient> findByFullNameContaining(String name) {
+        return patientRepository.findByFullNameContaining(name);
+    }
+
+    @Override
+    public void dispatchPatient(Long id) {
+        Patient patient = patientRepository.findById(id).get();
+        patient.setStatus(PatientStatus.OUT_OF_HOSPITAL);
+        patientRepository.save(patient);
     }
 
     public int getPatientAgeOrBirthYear(Patient patient) {

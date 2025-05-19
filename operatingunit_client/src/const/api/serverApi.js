@@ -34,12 +34,18 @@ export const serverApi = {
   },
   operationPlan: {
     load: `/api/v1/operationPlan/load`,
+    info: `/api/v1/operationPlan/info`,
+    create:`/api/v1/operationPlan/create`
   },
   operations: {
     get: (id) => `/api/v1/operations/${id}`,
     getAllForDate: (date) => `/api/v1/operations?date=${date}`,
     getOngoingForDates: (startDate, endDate) =>
       `/api/v1/operations/ongoing?startDate=${startDate}&endDate=${endDate}`,
+    getBetweenDates: `/api/v1/operations/dates`
+  },
+  logs: {
+    getBetweenDates: `/api/v1/logs`
   },
   report: {
     operation: (id) => `/api/v1/report/operations/${id}`,
@@ -51,4 +57,20 @@ export const serverApi = {
     create: `api/v1/auth/register-user`,
     userById: (id) => `api/v1/appUsers/${id}`,
   },
+  patient: {
+    getAllInHospital: `api/v1/patient/all`,
+    dispatchById: (id) =>  `api/v1/patient/dispatch/${id}`,
+    save: `api/v1/patient`,
+    update: `api/v1/patient`
+  },
+  worker: {
+    getAll : `api/v1/worker/all/employed`,
+    update : `api/v1/worker/update`,
+    save : `api/v1/worker/save`
+  },
+  analysis: {
+    workers: (id) => `api/v1/analysis/worker/${id}`,
+    rooms: (name) => `api/v1/analysis/room/${name}`,
+    operations: `api/v1/analysis`
+  }
 };

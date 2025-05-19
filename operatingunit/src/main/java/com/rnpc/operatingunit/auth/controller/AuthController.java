@@ -8,11 +8,12 @@ import com.rnpc.operatingunit.dto.response.appUser.AppUserResponse;
 import com.rnpc.operatingunit.model.AccessRole;
 import com.rnpc.operatingunit.model.AppUser;
 import com.rnpc.operatingunit.service.AccessRoleService;
-import com.rnpc.operatingunit.service.AppUserService;
+import com.rnpc.operatingunit.service.impl.DefaultAppUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +25,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationService authenticationService;
-    private final AppUserService appUserService;
+    private final DefaultAppUserService appUserService;
     private final AccessRoleService accessRoleService;
     private final ModelMapper modelMapper;
+
+    @GetMapping("/test")
+    public void test(){
+        AppUser user = AppUser.builder()
+                .login("test_user")
+                .password("test_user")
+                .build();
+        appUserService.registerTestUser(user);
+    }
 
     @PostMapping("/register-user")
     @ResponseStatus(HttpStatus.CREATED)

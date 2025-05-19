@@ -1,9 +1,13 @@
 package com.rnpc.operatingunit.service.impl;
 
+import com.rnpc.operatingunit.enums.LogAffectedEntityType;
+import com.rnpc.operatingunit.enums.LogOperationType;
 import com.rnpc.operatingunit.enums.MedicalWorkerOperationRole;
+import com.rnpc.operatingunit.model.LogMethodExecution;
 import com.rnpc.operatingunit.model.MedicalWorker;
 import com.rnpc.operatingunit.model.OperationFact;
 import com.rnpc.operatingunit.model.OperationPlan;
+import com.rnpc.operatingunit.model.WorkerStatus;
 import com.rnpc.operatingunit.repository.MedicalWorkerRepository;
 import com.rnpc.operatingunit.service.MedicalWorkerService;
 import com.rnpc.operatingunit.service.PersonService;
@@ -13,11 +17,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,7 +76,8 @@ public class DefaultMedicalWorkerService implements MedicalWorkerService {
 
     public MedicalWorker setOperationPlanMedicalWorkerByRole(OperationPlan operationPlan, String name,
                                                              MedicalWorkerOperationRole role) {
-        MedicalWorker medicalWorker = getMedicalWorker(name);
+        Optional<MedicalWorker> optionalMedicalWorker = tryFindMedicalWorkerByName(name);
+        MedicalWorker medicalWorker = optionalMedicalWorker.orElse(getMedicalWorker(name));
 
         switch (role) {
             case OPERATOR -> operationPlan.setOperator(medicalWorker);
@@ -84,6 +86,20 @@ public class DefaultMedicalWorkerService implements MedicalWorkerService {
         }
 
         return medicalWorker;
+    }
+
+    private Optional<MedicalWorker> tryFindMedicalWorkerByName(String name){
+        Optional<MedicalWorker> result;
+        try{
+            Long id = Long.parseLong(name);
+            result = medicalWorkerRepository.findById(id);
+        } catch (Exception e){
+            result = Optional.empty();
+        }
+        if(result.isEmpty()){
+            return medicalWorkerRepository.findByFullName(name);
+        }
+        return result;
     }
 
     public Map<MedicalWorkerOperationRole, String> createMedicalWorkersRoleMap(String operatorName,
@@ -97,7 +113,44 @@ public class DefaultMedicalWorkerService implements MedicalWorkerService {
         return workers;
     }
 
+    @Override
+    public List<MedicalWorker> findAllEmployedWorkers() {
+        return medicalWorkerRepository.findByWorkerStatusNotAndFullNameIsNotNull(WorkerStatus.DELETED);
+    }
+
+    @Override
+    public MedicalWorker findById(Long id) {
+        return medicalWorkerRepository.findById(id).get();
+    }
+
+    @Override
+    @LogMethodExecution(entity = LogAffectedEntityType.WORKER, operation = LogOperationType.CREATE)
+    public void save(MedicalWorker medicalWorker) {
+        medicalWorkerRepository.save(medicalWorker);
+    }
+
+    @Override
+    public List<MedicalWorker> findAll() {
+        return medicalWorkerRepository.findAll();
+    }
+
+    @Override
+    public List<MedicalWorker> findByStatus(WorkerStatus status) {
+        return medicalWorkerRepository.findByWorkerStatus(status);
+    }
+
+    @Override
+    public List<MedicalWorker> findByFullNameContaining(String name) {
+        return medicalWorkerRepository.findByFullNameContaining(name);
+    }
+
+    @Override
+    public List<MedicalWorker> findAvailableWorkers(LocalDateTime start, LocalDateTime end) {
+        return medicalWorkerRepository.findFreeWorkers(start, end);
+    }
+
     private MedicalWorker getMedicalWorker(String name) {
+
         MedicalWorker medicalWorker = new MedicalWorker();
 
         if (StringUtils.isNotBlank(name)) {

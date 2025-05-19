@@ -35,16 +35,6 @@ function UsersByRolePage() {
           ]}
           defaultKey={managerMenuItems.users[`${role}`].key}
         >
-          {role !== managerMenuItems.users.tracker.key.toLowerCase() && (
-            <Button
-              type="primary"
-              style={{ width: "100%" }}
-              onClick={() => setModal2Open(true)}
-            >
-              Зарегистрировать нового пользователя с ролью
-              {" " + managerMenuItems.users[`${role}`].label}
-            </Button>
-          )}
           <p />
           <div>
             <UsersTable users={users} role={role} />

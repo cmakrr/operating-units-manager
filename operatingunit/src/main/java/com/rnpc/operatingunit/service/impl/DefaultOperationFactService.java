@@ -1,11 +1,14 @@
 package com.rnpc.operatingunit.service.impl;
 
+import com.rnpc.operatingunit.enums.LogAffectedEntityType;
+import com.rnpc.operatingunit.enums.LogOperationType;
 import com.rnpc.operatingunit.enums.MedicalWorkerOperationRole;
 import com.rnpc.operatingunit.enums.OperationStepStatusName;
 import com.rnpc.operatingunit.exception.operation.OperationFactCantBeCanceledException;
 import com.rnpc.operatingunit.exception.operation.OperationFactCantBeFinishedException;
 import com.rnpc.operatingunit.exception.operation.OperationFactNotCreatedException;
 import com.rnpc.operatingunit.exception.operation.OperationFactNotStartException;
+import com.rnpc.operatingunit.model.LogMethodExecution;
 import com.rnpc.operatingunit.model.Operation;
 import com.rnpc.operatingunit.model.OperationFact;
 import com.rnpc.operatingunit.model.OperationPlan;
@@ -49,7 +52,7 @@ public class DefaultOperationFactService implements OperationFactService {
             operationFact = createOperationFactFromOperation(operation.getOperationPlan());
             populateOperationFactSteps(operationFact);
 
-            operationFactRepository.save(operationFact);
+            save(operationFact);
 
             operation.setDate(LocalDate.now());
             operationService.setOperationFact(operation, operationFact);
@@ -60,7 +63,13 @@ public class DefaultOperationFactService implements OperationFactService {
         }
     }
 
+    @LogMethodExecution(entity = LogAffectedEntityType.OPERATION_FACT, operation = LogOperationType.CREATE)
+    public void save(OperationFact operationFact){
+        operationFactRepository.save(operationFact);
+    }
+
     @Transactional
+    @LogMethodExecution(entity = LogAffectedEntityType.OPERATION_FACT, operation = LogOperationType.EDIT)
     public OperationFact updateSettableInfo(Long operationFactId,
                                             Map<MedicalWorkerOperationRole, String> workers,
                                             String instruments) {
@@ -75,6 +84,7 @@ public class DefaultOperationFactService implements OperationFactService {
     }
 
     @Transactional
+    @LogMethodExecution(entity = LogAffectedEntityType.OPERATION_FACT, operation = LogOperationType.EDIT)
     public OperationFact start(Long operationId, Long operationFactId) {
         Operation operation = operationService.getById(operationId);
         OperationFact operationFact = getById(operationFactId);
@@ -90,6 +100,7 @@ public class DefaultOperationFactService implements OperationFactService {
     }
 
     @Transactional
+    @LogMethodExecution(entity = LogAffectedEntityType.OPERATION_FACT, operation = LogOperationType.EDIT)
     public OperationFact cancelStart(Long operationId, Long operationFactId) {
         Operation operation = operationService.getById(operationId);
         OperationFact operationFact = getById(operationFactId);
@@ -109,6 +120,7 @@ public class DefaultOperationFactService implements OperationFactService {
     }
 
     @Transactional
+    @LogMethodExecution(entity = LogAffectedEntityType.OPERATION_FACT, operation = LogOperationType.EDIT)
     public OperationStepStatus startNextOperationStep(Long operationFactId) {
         OperationFact operationFact = getById(operationFactId);
 
@@ -134,6 +146,7 @@ public class DefaultOperationFactService implements OperationFactService {
     }
 
     @Transactional
+    @LogMethodExecution(entity = LogAffectedEntityType.OPERATION_FACT, operation = LogOperationType.EDIT)
     public OperationFact finish(Long operationId, Long operationFactId) {
         Operation operation = operationService.getById(operationId);
         OperationFact operationFact = getById(operationFactId);

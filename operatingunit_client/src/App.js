@@ -18,8 +18,16 @@ import MonitoringPage from "./pages/manager/MonitoringPage";
 import OperatingRoomPage from "./pages/manager/OperatingRoomPage";
 import UsersByRolePage from "./pages/manager/UsersByRolePage";
 import {getAuthHeader, getToken} from "./functions/Token";
+import PatientsPage from "./pages/manager/PatientsPage";
+import WorkersPage from "./pages/manager/WorkersPage";
+import CreateOperationPage from "./pages/manager/CreateOperationPage";
+import RoomsAnalysis from "./pages/analysis/RoomsAnalysis";
+import WorkersAnalysis from "./pages/analysis/WorkersAnalysis";
+import OperationsAnalysis from "./pages/analysis/OperationsAnalysis";
+import LogPage from "./pages/manager/LogPage";
+import OperationsHistoryPage from "./pages/manager/OperationsHistoryPage";
 
-axios.defaults.baseURL = `http://192.168.0.104:80`;
+axios.defaults.baseURL = `http://localhost:80`;
 
 axios.defaults.formSerializer = (data) => {
   return JSON.stringify(data);
@@ -126,6 +134,43 @@ function App() {
                 <Route
                   path={clientApi.manager.users(":role")}
                   element={<UsersByRolePage />}
+                />
+                <Route
+                    path={clientApi.manager.patients}
+                    element={<PatientsPage />}
+                />
+                <Route
+                    path={clientApi.manager.workers}
+                    element={<WorkersPage />}
+                />
+                <Route
+                    path={clientApi.manager.createPlan}
+                    element={<CreateOperationPage />}
+                />
+
+                <Route
+                    path={clientApi.manager.operatingRoomsAnalysis}
+                    element={<RoomsAnalysis />}
+                />
+
+                <Route
+                    path={clientApi.manager.workersAnalysis}
+                    element={<WorkersAnalysis />}
+                />
+
+                <Route
+                    path={clientApi.manager.operationsAnalysis}
+                    element={<OperationsAnalysis />}
+                />
+
+                <Route
+                    path={clientApi.manager.logs}
+                    element={<LogPage />}
+                />
+
+                <Route
+                    path={clientApi.manager.operations}
+                    element={<OperationsHistoryPage/>}
                 />
               </Routes>
             </Router>

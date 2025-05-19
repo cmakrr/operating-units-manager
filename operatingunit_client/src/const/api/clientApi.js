@@ -18,6 +18,7 @@ export const clientApi = {
     plan: `/management/plan`,
     planForDate: (date) => `/management/plan?date=${date}`,
     loadPlan: `/management/plan/load`,
+    createPlan: `/management/plan/create`,
     operatingRooms: `/management/operatingRooms`,
     operation: (id) => `/management/operation/${id}`,
     statistics: `/management/statistics`,
@@ -25,5 +26,12 @@ export const clientApi = {
       `/management/statistics?startDate=${startDate}&endDate=${endDate}`,
     monitoring: `/management/monitoring`,
     users: (role) => `/management/users/${role}`,
+    patients: `/management/patients`,
+    workers: `/management/workers`,
+    operatingRoomsAnalysis: `/management/analysis/rooms`,
+    workersAnalysis: `/management/analysis/workers`,
+    operationsAnalysis: `/management/analysis/operations`,
+    operations: `/management/operations`,
+    logs: `/management/logs`
   },
 };

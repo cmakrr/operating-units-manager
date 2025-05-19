@@ -14,6 +14,8 @@ public interface AppUserService extends UserDetailsService {
 
     List<AppUser> getByRole(String role);
 
+    List<AppUser> getByRoleIn(List<String> roles);
+
     AppUser registerNewUser(AppUser appUser);
 
     void updatePassword(Long id, String password);

@@ -30,13 +30,6 @@ function OperatingRoomPage() {
           breadcrumb={[managerMenuItems.operatingRooms.label]}
           defaultKey={managerMenuItems.operatingRooms.key}
         >
-          <Button
-            type="primary"
-            style={{ width: "100%" }}
-            onClick={() => setModal2Open(true)}
-          >
-            Добавить операционный блок
-          </Button>
           <p />
           <div>
             <OperatingRoomTable rooms={rooms} />

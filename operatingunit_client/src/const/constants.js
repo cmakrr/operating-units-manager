@@ -52,12 +52,57 @@ export const usersTableLocale = {
   ),
 };
 
+export const patientsTableLocale = {
+  ...tableLocale,
+  emptyText: (
+      <Empty
+          description={`Пациенты отсутствуют.`}
+      />
+  ),
+};
+
+export const logsTableLocale = {
+  ...tableLocale,
+  emptyText: (
+      <Empty
+          description={`Логи отсутствуют.`}
+      />
+  ),
+};
+
+export const operationsTableLocale = {
+  ...tableLocale,
+  emptyText: (
+      <Empty
+          description={`Операции отсутствуют.`}
+      />
+  ),
+};
+
+export const workersTableLocale = {
+  ...tableLocale,
+  emptyText: (
+      <Empty
+          description={`Пациенты отсутствуют.`}
+      />
+  ),
+};
+
 export const tableOperationsLocale = {
   ...tableLocale,
   emptyText: (
     <Empty
       description={`В данные календарные сутки не было проводимых и запланированных операций`}
     />
+  ),
+};
+
+export const tableOperationsHistoryLocale = {
+  ...tableLocale,
+  emptyText: (
+      <Empty
+          description={`За данный период времени не было проведено операций`}
+      />
   ),
 };
 
@@ -93,6 +138,7 @@ export const managerMenuItems = {
     main: { label: "План", key: "Plan" },
     load: { label: "Загрузка", key: "PlanLoad" },
     view: { label: "Просмотр", key: "PlanView" },
+    create: { label : "Создать", key: "CreatePlan" }
   },
   users: {
     main: {
@@ -110,10 +156,21 @@ export const managerMenuItems = {
   monitoring: { label: `Мониторинг`, key: `Monitoring` },
   operatingRooms: { label: "Операционные", key: "OperatingRooms" },
   statistics: { label: `Статистика`, key: `Statistics` },
+  patients: { label: `Пациенты`, key: `Patients`},
+  workers: {label: `Работники`, key: `Workers`},
+  operations: {label: `История операций`, key: `Operations`},
+  logs: {label: `Логи`, key: `Logs`},
+  analysis: {
+    main: { label: "Анализ", key: "Analysis" },
+    worker: { label: "Работники", key: "WorkersAnalysis" },
+    room: { label: "Палаты", key: "RoomsAnalysis"},
+    operations: {label: "Операции", key: "OperationsAnalysis"}
+  }
 };
 
 export const menuItemsKeyRoutes = {
   [managerMenuItems.plan.load.key]: clientApi.manager.loadPlan,
+  [managerMenuItems.plan.create.key]: clientApi.manager.createPlan,
   [managerMenuItems.plan.view.key]: (date) =>
     clientApi.manager.planForDate(date),
   [managerMenuItems.statistics.key]: (startDate, endDate) =>
@@ -121,4 +178,11 @@ export const menuItemsKeyRoutes = {
   [managerMenuItems.operatingRooms.key]: clientApi.manager.operatingRooms,
   [managerMenuItems.monitoring.key]: clientApi.manager.monitoring,
   [managerMenuItems.users.main.key]: (role) => clientApi.manager.users(role),
+  [managerMenuItems.patients.key]: clientApi.manager.patients,
+  [managerMenuItems.workers.key]: clientApi.manager.workers,
+  [managerMenuItems.analysis.operations.key]: clientApi.manager.operationsAnalysis,
+  [managerMenuItems.analysis.worker.key]: clientApi.manager.workersAnalysis,
+  [managerMenuItems.analysis.room.key]: clientApi.manager.operatingRoomsAnalysis,
+  [managerMenuItems.operations.key]: clientApi.manager.operations,
+  [managerMenuItems.logs.key]: clientApi.manager.logs
 };
